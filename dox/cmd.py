@@ -1,30 +1,23 @@
-import docker
-import docker.unixconn
-from docker.unixconn import unixconn
-import requests
+# Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import dox.locations
+import dox.payloads
 
 
-def _get_docker_api_version():
-    session = requests.Session()
-    session.mount(
-        "http+unix://",
-        docker.unixconn.unixconn.UnixAdapter(
-            "http+unix://var/run/docker.sock", 60))
-    response = session.get('/version')
-    try:
-        api_version = response.json()['ApiVersion']
-    except KeyError:
-        # For now, fall back to 1.10 as a safety net
-        api_version = '1.10'
-    return api_version
-
-
-def _version_string_to_tuple(version):
-    return tuple([int(f) for f in version.split('.')])
-
-  
-class Dox(object):
-
-
-    def __init__(self):
-        self.client = docker.Client(version=_get_docker_api_version())
+def main():
+    location = dox.locations.get_location()
+    payload = dox.payloads.get_payload()
+    return location.run(payload)

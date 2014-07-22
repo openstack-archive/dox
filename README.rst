@@ -9,9 +9,13 @@ tox and virtualenv for python. There are two elements to its configuration:
 
 * In what image should they be run?
 
-If there is a dox.yml file, you're set. You want a docker section to specify
-what image to use and a testenv section to specify the commands to run. You
-win.
+If there is a dox.yml file, you're set. You want to specify what image to
+use and what commands to run. You win::
+
+  image: ubuntu:trusty
+  commands: |
+    pip install . -r test-requirements.txt
+    python setup.py test
 
 You might either not be willing to commit to dox as a way of life yet, or you
 may want to use dox in a project that similarly has not done so.
@@ -50,9 +54,11 @@ If there is a tox.ini file, and it contains a [docker] section, the value in
   [docker]
   image=ubuntu:trusty
 
-If there is not an image key in the docker section but there is a Dockerfile
-in the repo, an image will be built using the Dockerfile and the test
-commands will be run inside of the image.
+If there is not an image key in the docker section or an image key in the
+dox.yml but there is a Dockerfile in the repo, an new image will be built
+using the Dockerfile and the test commands will be run inside of the image.
+
+If all of that fails, tests are going to run in a bare ubuntu image. Good luck!
 
 Additional information
 ----------------------
