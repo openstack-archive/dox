@@ -13,29 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ConfigParser
-import os
-
-import yaml
+import dox.config.dockerfile
+import dox.config.dox_yaml
+import dox.config.tox_ini
 
 
 def get_location():
     '''Examine the local environment and figure out where we should run.'''
 
+    dockerfile = dox.config.dockerfile.get_dockerfile()
+    dox_yaml = dox.config.dox_yaml.get_dox_yaml()
+    tox_ini = dox.config.tox_ini.get_tox_ini()
+
     # Set default image value
-    if os.path.exists('Dockerfile'):
+    if dockerfile.exists():
         image = None
     else:
         image = 'ubuntu'
 
-    if os.path.exists('dox.yml'):
-        dox_yaml = yaml.load(open('dox.yml', 'r'))
-        image = dox_yaml.get('image', image)
-    elif os.path.exists('tox.ini'):
-        tox_ini = ConfigParser.ConfigParser()
-        tox_ini.read('tox.ini')
-        if tox_ini.has_option('docker', 'image'):
-            image = tox_ini.get('docker', 'image')
+    if dox_yaml.exists():
+        image = dox_yaml.get_image(image)
+    elif tox_ini.exists():
+        image = tox_ini.get_image(image)
     return Location(image=image)
 
 
