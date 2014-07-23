@@ -13,12 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+__all__ = [
+    'get_image',
+    'Location',
+]
+
 import dox.config.dockerfile
 import dox.config.dox_yaml
 import dox.config.tox_ini
 
 
-def get_location():
+def get_image():
     '''Examine the local environment and figure out where we should run.'''
 
     dockerfile = dox.config.dockerfile.get_dockerfile()
@@ -35,13 +40,13 @@ def get_location():
         image = dox_yaml.get_image(image)
     elif tox_ini.exists():
         image = tox_ini.get_image(image)
-    return Location(image=image)
+    return image
 
 
 class Location(object):
 
-    def __init__(self, image):
-        self.image = image
+    def __init__(self):
+        self.image = get_image()
 
     def run(self, payload):
         print("Going to run {0} in {1}".format(
