@@ -22,6 +22,7 @@ import yaml
 def get_payload():
     '''Examine the local environment and figure out what we should run.'''
 
+    payload = None
     if os.path.exists('dox.yml'):
         dox_yml = yaml.load(open('dox.yml'))
         payload = dox_yml.get('commands', None)
