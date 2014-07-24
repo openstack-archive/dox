@@ -38,8 +38,8 @@ class TestPayloads(base.TestCase):
         ('dox_yaml_ignore_others', dict(
             dox_yaml=True, tox_ini=True, travis_yaml=True,
             dox_value="testr run", tox_value="setup.py test",
-            travis_value="gem test"
-            , payload="testr run")),
+            travis_value="gem test",
+            payload="testr run")),
         ('tox_ini', dict(
             dox_yaml=False, tox_ini=True, travis_yaml=False,
             dox_value=None, tox_value="setup.py test", travis_value=None,

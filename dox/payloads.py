@@ -41,8 +41,12 @@ class Payload(object):
 
     def __init__(self):
         self.payload = get_payload()
+        self.args = []
 
     def __str__(self):
         if hasattr(self.payload, 'append'):
             return "\n".join(self.payload)
-        return self.payload
+        return self.payload + ' ' + ' '.join(self.args)
+
+    def append(self, args):
+        self.args = args

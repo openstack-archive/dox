@@ -15,7 +15,6 @@
 
 __all__ = [
     'get_image',
-    'Location',
 ]
 
 import dox.config.dockerfile
@@ -41,13 +40,3 @@ def get_image():
     elif tox_ini.exists():
         image = tox_ini.get_image(image)
     return image
-
-
-class Location(object):
-
-    def __init__(self):
-        self.image = get_image()
-
-    def run(self, payload):
-        print("Going to run {0} in {1}".format(
-            payload, self.image))

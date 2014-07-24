@@ -1,4 +1,5 @@
 pbr>=0.5.21,<1.0
 
+argparse
 PyYAML
 sh

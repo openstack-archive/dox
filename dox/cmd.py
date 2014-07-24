@@ -13,11 +13,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
+
 import dox.locations
 import dox.payloads
+import dox.runner
 
 
 def main():
-    location = dox.locations.Location()
-    payload = dox.payloads.Payload()
-    return location.run(payload)
+    parser = argparse.ArgumentParser(description='Run tests in docker.')
+    parser.add_argument(dest='extra_args', nargs='*',
+                        help='args to append to command, or command to run'
+                             ' if -c is given')
+    parser.add_argument('-i', '--image', dest='image',
+                        help='Base image to use')
+    parser.add_argument('-c', '--command', dest='command', default=False,
+                        action='store_true',
+                        help='Treat arguments as the entire command to run')
+    parser.add_argument('-r', '--rebuild', dest='rebuild', default=False,
+                        action='store_true',
+                        help='Rebuild the test image')
+    parser.add_argument('--rebuild-all', dest='rebuild_all', default=False,
+                        action='store_true', help='Rebuild all images')
+    args = parser.parse_args()
+
+    image = args.image
+    if args.image is None:
+        image = dox.locations.get_image()
+    if args.command:
+        command = " ".join(args.extra_args)
+    else:
+        command = dox.payloads.Payload()
+        if args.extra_args:
+            command.append(args.extra_args)
+    return dox.runner.Runner(args).run(image, command)
