@@ -17,12 +17,15 @@ __all__ = [
     'Runner',
 ]
 
+import logging
 import os
 import shutil
 import shlex
 import tempfile
 
 import sh
+
+logger = logging.getLogger(__name__)
 
 
 class Runner(object):
@@ -44,43 +47,46 @@ class Runner(object):
             dockerfile.write("WORKDIR /dox\n")
             for command in commands.prep_commands():
                 dockerfile.write("RUN %s\n" % command)
-        r =sh.cat(os.path.join(tempd, 'Dockerfile'))
-        print(r.stdout)
-        sh.docker.build('-t', self.get_tagname("test"), tempd)
+        logger.debug(sh.cat(os.path.join(tempd, 'Dockerfile')).stdout)
         try:
-            pass
+            if not self.args.noop:
+                sh.docker.build('-t', self.get_tagname("test"), tempd)
         except Exception as e:
             raise e
         finally:
             shutil.rmtree(tempd)
 
     def run_commands(self, command):
-        sh.docker.run(
-            '--rm',
-            '-v', "%s:/src" % os.path.abspath('.'),
-            '-w', '/src', self.get_tagname('test'), *command)
+        if not self.args.noop:
+            sh.docker.run(
+                '--rm',
+                '-v', "%s:/src" % os.path.abspath('.'),
+                '-w', '/src', self.get_tagname('test'), *command)
 
     def build_base_image(self):
         image_name = self.get_tagname("base")
-        sh.docker.build('-t', image_name, '.')
+        if not self.args.noop:
+            sh.docker.build('-t', image_name, '.')
         return image_name
 
     def run(self, image, command):
-        print("Going to run {0} in {1}".format(command.test_command(), image))
+        logger.debug(
+            "Going to run {0} in {1}".format(command.test_command(), image))
         if self.args.rebuild:
-            print("Need to rebuild")
+            logger.debug("Need to rebuild")
         try:
             if image is None:
                 image = self.build_base_image()
-            print("Test image {0} with {1}".format(
-                image, command.prep_commands()))
+            logger.debug(
+                "Test image {0} with {1}".format(
+                    image, command.prep_commands()))
             self.build_test_image(image, command)
         except sh.ErrorReturnCode as e:
-            print("build failed", e.message)
+            logger.debug("build failed", e.message)
             return 1
         try:
             self.run_commands(shlex.split(command.test_command()))
         except sh.ErrorReturnCode as e:
-            print("run failed")
-            print(e.stderr)
+            logger.error("Commands failed")
+            logger.info(e.stderr)
             return 1

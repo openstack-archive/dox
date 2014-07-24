@@ -13,11 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 import argparse
 
 import dox.commands
 import dox.images
 import dox.runner
+
+logger = logging.getLogger(__name__)
+
+
+def get_log_level(args):
+    if args.debug:
+        return logging.DEBUG
+    if args.verbose:
+        return logging.INFO
+    return logging.WARN
+
+
+def setup_logging(level):
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    handler.setFormatter(formatter)
+    logger = logging.getLogger('dox')
+    logger.setLevel(level)
+    logger.addHandler(handler)
 
 
 def main():
@@ -35,7 +56,18 @@ def main():
                         help='Rebuild the test image')
     parser.add_argument('--rebuild-all', dest='rebuild_all', default=False,
                         action='store_true', help='Rebuild all images')
+    parser.add_argument('-d', '--debug', dest='debug', default=False,
+                        action='store_true', help='Debug mode')
+    parser.add_argument('-v', '--verbose', dest='verbose', default=False,
+                        action='store_true', help='Verbose output')
+    parser.add_argument('-n', '--noop', dest='noop', default=False,
+                        action='store_true',
+                        help="Don't actually execute commands")
     args = parser.parse_args()
+
+    setup_logging(get_log_level(args))
+    logger.debug("This is debug")
+    logger.info("This is info")
 
     image = args.image
     if args.image is None:
