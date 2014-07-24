@@ -15,10 +15,10 @@
 # under the License.
 
 """
-test_locations
-----------------------------------
+test_payloads
+--------------
 
-Tests for `dox location` module.
+Tests for `dox.payloads` module.
 """
 
 import fixtures
@@ -26,31 +26,6 @@ import testscenarios
 
 from dox import locations
 from dox.tests import base
-
-
-def fake_does_exist(self):
-    return True
-
-
-def fake_does_not_exist(self):
-    return False
-
-
-def get_fake_value(value):
-    if value:
-        def fake_value(self, image):
-            return value
-    else:
-        def fake_value(self, image):
-            return image
-    return fake_value
-
-
-def bool_to_fake(val):
-    if val:
-        return fake_does_exist
-    else:
-        return fake_does_not_exist
 
 
 class TestLocations(base.TestCase):
@@ -95,19 +70,19 @@ class TestLocations(base.TestCase):
         super(TestLocations, self).setUp()
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.dockerfile.Dockerfile.exists',
-            bool_to_fake(self.dockerfile)))
+            base.bool_to_fake(self.dockerfile)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.dox_yaml.DoxYaml.exists',
-            bool_to_fake(self.dox_yaml)))
+            base.bool_to_fake(self.dox_yaml)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.tox_ini.ToxIni.exists',
-            bool_to_fake(self.tox_ini)))
+            base.bool_to_fake(self.tox_ini)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.dox_yaml.DoxYaml.get_image',
-            get_fake_value(self.dox_value)))
+            base.get_fake_value(self.dox_value)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.tox_ini.ToxIni.get_image',
-            get_fake_value(self.tox_value)))
+            base.get_fake_value(self.tox_value)))
 
     def test_location(self):
         l = locations.Location()
