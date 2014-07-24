@@ -60,6 +60,42 @@ using the Dockerfile and the test commands will be run inside of the image.
 
 If all of that fails, tests are going to run in a bare ubuntu image. Good luck!
 
+Image Caching
+-------------
+
+Every run actually has two images associated with it: The `base` image and
+the `test` image.
+
+The image referenced above is the `base` image. When you execute `dox`,
+it will search docker for the named image. If it exists, it will do nothing.
+If it does not, it will either pull it, or, it will build it from the
+Dockerfile. In the case of building from a Dockerfile, dox will make an image
+named for the source directory. So if you're in ~/src/openstack/nova, it'll
+make an image called "dox/nova/base".
+
+The `test` image is an image made by dox for the test run. Similar to the
+base run, it'll have a generated name, such as "dox/nova/test", and similar
+to the base image, it will get generated once and then left alone.
+
+If you want to regenerate the `test` image, you can run dox with the `-r`
+option. If you want to regenerate/repull everything, you can run it with the
+`--rebuild-all` option.
+
+The reasoning behind this is that the base image should really be the
+substrata which doesn't have a lot to do with the repo itself ... it shouldn't
+really expect to change much based on day to day changes in the repo. The
+test image on the other hand is built a bit more based on the repo itself.
+So, for instance, in the base image you might want to do things like::
+
+  apt-get install libxml-dev
+
+and in the test image, you'd want things like::
+
+  pip install -U requirements.txt
+
+Neither change frequently, but the second it more likely to change day to day
+than the first.
+
 Additional information
 ----------------------
 
