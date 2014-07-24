@@ -48,3 +48,9 @@ class ToxIni(object):
         if ini.has_option('docker', 'image'):
             image = ini.get('docker', 'image')
         return image
+
+    def get_payload(self, payload):
+        ini = self._open_tox_ini()
+        if ini.has_option('testenv', 'commands'):
+            payload = ini.get('testenv', 'commands')
+        return payload

@@ -13,38 +13,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ConfigParser
-import os
+__all__ = [
+    'get_payload',
+    'Payload',
+]
 
-import yaml
+import dox.config.dox_yaml
+import dox.config.tox_ini
+import dox.config.travis_yaml
 
 
 def get_payload():
     '''Examine the local environment and figure out what we should run.'''
 
+    dox_yaml = dox.config.dox_yaml.get_dox_yaml()
+    tox_ini = dox.config.tox_ini.get_tox_ini()
+    travis_yaml = dox.config.travis_yaml.get_travis_yaml()
+
     payload = None
-    if os.path.exists('dox.yml'):
-        dox_yml = yaml.load(open('dox.yml'))
-        payload = dox_yml.get('commands', None)
-    if payload is None and os.path.exists('tox.ini'):
-        tox_ini = ConfigParser.ConfigParser()
-        tox_ini.read('tox.ini')
-        if tox_ini.has_option('testenv', 'commands'):
-            payload = tox_ini.get('testenv', 'commands')
-        else:
-            payload = None
-    if payload is None and os.path.exists('.travis.yml'):
-        travis_yml = yaml.load(open('.travis.yml'))
-        payload = travis_yml.get('script')
-    return Payload(payload=payload)
+    for source in (dox_yaml, tox_ini, travis_yaml):
+        if payload is None and source.exists():
+            payload = source.get_payload(payload)
+    return payload
 
 
 class Payload(object):
 
-    def __init__(self, payload):
-        self.payload = payload
+    def __init__(self):
+        self.payload = get_payload()
 
-    def get_payload(self):
+    def __str__(self):
         if hasattr(self.payload, 'append'):
             return "\n".join(self.payload)
         return self.payload

@@ -19,5 +19,5 @@ import dox.payloads
 
 def main():
     location = dox.locations.Location()
-    payload = dox.payloads.get_payload()
+    payload = dox.payloads.Payload()
     return location.run(payload)

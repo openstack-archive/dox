@@ -14,37 +14,34 @@
 # limitations under the License.
 
 __all__ = [
-    'get_dox_yaml',
+    'get_travis_yaml',
 ]
 
 import os
 
 import yaml
 
-_dox_yaml = None
+_travis_yaml = None
 
 
-def get_dox_yaml():
-    global _dox_yaml
-    if _dox_yaml is None:
-        _dox_yaml = DoxYaml()
-    return _dox_yaml
+def get_travis_yaml():
+    global _travis_yaml
+    if _travis_yaml is None:
+        _travis_yaml = TravisYaml()
+    return _travis_yaml
 
 
-class DoxYaml(object):
+class TravisYaml(object):
 
     _yaml = None
 
-    def _open_dox_yaml(self):
+    def _open_travis_yaml(self):
         if self._yaml is None:
-            self._yaml = yaml.load(open('dox.yml', 'r'))
+            self._yaml = yaml.load(open('travis.yml', 'r'))
         return self._yaml
 
     def exists(self):
-        return os.path.exists('dox.yml')
-
-    def get_image(self, image):
-        return self._open_dox_yaml().get('image', image)
+        return os.path.exists('travis.yml')
 
     def get_payload(self, payload):
-        return self._open_dox_yaml().get('commands', payload)
+        return self._open_travis_yaml().get('script', payload)

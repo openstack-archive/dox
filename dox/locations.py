@@ -50,4 +50,4 @@ class Location(object):
 
     def run(self, payload):
         print("Going to run {0} in {1}".format(
-            payload.get_payload(), self.image))
+            payload, self.image))
