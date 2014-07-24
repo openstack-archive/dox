@@ -15,7 +15,7 @@
 
 import argparse
 
-import dox.locations
+import dox.images
 import dox.payloads
 import dox.runner
 
@@ -39,7 +39,7 @@ def main():
 
     image = args.image
     if args.image is None:
-        image = dox.locations.get_image()
+        image = dox.images.get_image()
     if args.command:
         command = " ".join(args.extra_args)
     else:

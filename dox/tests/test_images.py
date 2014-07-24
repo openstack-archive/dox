@@ -15,20 +15,20 @@
 # under the License.
 
 """
-test_payloads
+test_images
 --------------
 
-Tests for `dox.payloads` module.
+Tests for `dox.images` module.
 """
 
 import fixtures
 import testscenarios
 
-from dox import locations
+from dox import images
 from dox.tests import base
 
 
-class TestLocations(base.TestCase):
+class TestImages(base.TestCase):
 
     scenarios = [
         ('have_dockerfile', dict(
@@ -67,7 +67,7 @@ class TestLocations(base.TestCase):
     ]
 
     def setUp(self):
-        super(TestLocations, self).setUp()
+        super(TestImages, self).setUp()
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.dockerfile.Dockerfile.exists',
             base.bool_to_fake(self.dockerfile)))
@@ -84,9 +84,9 @@ class TestLocations(base.TestCase):
             'dox.config.tox_ini.ToxIni.get_image',
             base.get_fake_value(self.tox_value)))
 
-    def test_location(self):
-        l = locations.Location()
-        self.assertEqual(l.image, self.image)
+    def test_images(self):
+        image = images.get_image()
+        self.assertEqual(image, self.image)
 
 
 def load_tests(loader, in_tests, pattern):
