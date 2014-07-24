@@ -49,8 +49,13 @@ class ToxIni(object):
             image = ini.get('docker', 'image')
         return image
 
-    def get_commands(self, commands):
+    def get_commands(self):
         ini = self._open_tox_ini()
-        if ini.has_option('testenv', 'commands'):
-            commands = ini.get('testenv', 'commands')
+        commands = ini.get('testenv', 'commands')
         return commands
+
+    def get_prep_commands(self):
+        ini = self._open_tox_ini()
+        if ini.has_option('docker', 'prep'):
+            return [ini.get('docker', 'prep')]
+        return []

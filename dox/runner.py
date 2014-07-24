@@ -34,19 +34,23 @@ class Runner(object):
         project = os.path.basename(os.path.abspath('.'))
         return "%s/%s" % (project, tag)
 
-    def build_test_image(self, image, files=None, commands=None):
+    def build_test_image(self, image, commands):
         tempd = tempfile.mkdtemp()
         with open(os.path.join(tempd, 'Dockerfile'), 'w') as dockerfile:
             dockerfile.write("FROM %s\n" % image)
-            if files is not None:
-                for add_file in files:
-                    dockerfile.write("ADD %s /dox\n")
-                for command in commands:
-                    dockerfile.write("RUN %s\n")
+            for add_file in commands.get_add_files():
+                shutil.copy(add_file, os.path.join(tempd, add_file))
+                dockerfile.write("ADD %s /dox\n" % add_file)
+            dockerfile.write("WORKDIR /dox\n")
+            for command in commands.prep_commands():
+                dockerfile.write("RUN %s\n" % command)
+        r =sh.cat(os.path.join(tempd, 'Dockerfile'))
+        print(r.stdout)
+        sh.docker.build('-t', self.get_tagname("test"), tempd)
         try:
-            sh.docker.build('-t', self.get_tagname("test"), tempd)
-        except Exception:
-            raise
+            pass
+        except Exception as e:
+            raise e
         finally:
             shutil.rmtree(tempd)
 
@@ -62,13 +66,15 @@ class Runner(object):
         return image_name
 
     def run(self, image, command):
-        print("Going to run {0} in {1}".format(command, image))
+        print("Going to run {0} in {1}".format(command.test_command(), image))
         if self.args.rebuild:
             print("Need to rebuild")
         try:
             if image is None:
                 image = self.build_base_image()
-            self.build_test_image(image, commands=command.prep_commands())
+            print("Test image {0} with {1}".format(
+                image, command.prep_commands()))
+            self.build_test_image(image, command)
         except sh.ErrorReturnCode as e:
             print("build failed", e.message)
             return 1

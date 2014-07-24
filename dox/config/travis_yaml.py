@@ -45,3 +45,16 @@ class TravisYaml(object):
 
     def get_command(self, command):
         return self._open_travis_yaml().get('script', command)
+
+    def get_prep_commands(self):
+        travis_yaml = self._open_travis_yaml()
+        prep = []
+
+        for key in ('before_install', 'install', 'before_script'):
+            if travis_yaml.has_key(key):
+                val = travis_yaml[key]
+                if hasattr(val, 'append'):
+                    prep.extend(val)
+                else:
+                    prep.append(val)
+        return []

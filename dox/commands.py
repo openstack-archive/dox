@@ -31,25 +31,30 @@ def get_commands():
     travis_yaml = dox.config.travis_yaml.get_travis_yaml()
 
     commands = None
+    prep_commands = None
     for source in (dox_yaml, tox_ini, travis_yaml):
-        if commands is None and source.exists():
-            commands = source.get_commands(commands)
+        if source.exists():
+            return source
     return commands
 
 
 class Commands(object):
 
     def __init__(self):
-        self.commands = get_commands()
+        self.source = get_commands()
         self.args = []
 
     def test_command(self):
-        if hasattr(self.commands, 'append'):
-            return "\n".join(self.commands)
-        return self.commands + ' ' + ' '.join(self.args)
+        commands = self.source.get_commands()
+        if hasattr(commands, 'append'):
+            return "\n".join(commands)
+        return commands + ' ' + ' '.join(self.args)
 
     def prep_commands(self):
-        return []
+        return self.source.get_prep_commands()
+
+    def get_add_files(self):
+        return self.source.get_add_files()
 
     def append(self, args):
         self.args = args
