@@ -43,10 +43,13 @@ class Commands(object):
         self.commands = get_commands()
         self.args = []
 
-    def __str__(self):
+    def test_command(self):
         if hasattr(self.commands, 'append'):
             return "\n".join(self.commands)
         return self.commands + ' ' + ' '.join(self.args)
+
+    def prep_commands(self):
+        return []
 
     def append(self, args):
         self.args = args
