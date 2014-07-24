@@ -43,5 +43,5 @@ class TravisYaml(object):
     def exists(self):
         return os.path.exists('travis.yml')
 
-    def get_payload(self, payload):
-        return self._open_travis_yaml().get('script', payload)
+    def get_command(self, command):
+        return self._open_travis_yaml().get('script', command)

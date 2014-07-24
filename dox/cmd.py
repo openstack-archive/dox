@@ -15,8 +15,8 @@
 
 import argparse
 
+import dox.commands
 import dox.images
-import dox.payloads
 import dox.runner
 
 
@@ -43,7 +43,7 @@ def main():
     if args.command:
         command = " ".join(args.extra_args)
     else:
-        command = dox.payloads.Payload()
+        command = dox.commands.Commands()
         if args.extra_args:
             command.append(args.extra_args)
     return dox.runner.Runner(args).run(image, command)

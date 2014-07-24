@@ -15,51 +15,51 @@
 # under the License.
 
 """
-test_payloads
+test_commands
 ----------------------------------
 
-Tests for `dox.payloads` module.
+Tests for `dox.commands` module.
 """
 
 import fixtures
 import testscenarios
 
-from dox import payloads
+from dox import commands
 from dox.tests import base
 
 
-class TestPayloads(base.TestCase):
+class TestCommands(base.TestCase):
 
     scenarios = [
         ('dox_yaml', dict(
             dox_yaml=True, tox_ini=False, travis_yaml=False,
             dox_value="testr run", tox_value=None, travis_value=None,
-            payload="testr run")),
+            commands="testr run")),
         ('dox_yaml_ignore_others', dict(
             dox_yaml=True, tox_ini=True, travis_yaml=True,
             dox_value="testr run", tox_value="setup.py test",
             travis_value="gem test",
-            payload="testr run")),
+            commands="testr run")),
         ('tox_ini', dict(
             dox_yaml=False, tox_ini=True, travis_yaml=False,
             dox_value=None, tox_value="setup.py test", travis_value=None,
-            payload="setup.py test")),
+            commands="setup.py test")),
         ('tox_ignore_others', dict(
             dox_yaml=True, tox_ini=True, travis_yaml=False,
             dox_value=None, tox_value="setup.py test", travis_value="ruby",
-            payload="setup.py test")),
+            commands="setup.py test")),
         ('travis_yaml', dict(
             dox_yaml=False, tox_ini=False, travis_yaml=True,
             dox_value="testr run", tox_value=None, travis_value="ruby",
-            payload="ruby")),
+            commands="ruby")),
         ('travis_fallthrough', dict(
             dox_yaml=True, tox_ini=True, travis_yaml=True,
             dox_value=None, tox_value=None, travis_value="ruby",
-            payload="ruby")),
+            commands="ruby")),
     ]
 
     def setUp(self):
-        super(TestPayloads, self).setUp()
+        super(TestCommands, self).setUp()
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.dox_yaml.DoxYaml.exists',
             base.bool_to_fake(self.dox_yaml)))
@@ -70,18 +70,18 @@ class TestPayloads(base.TestCase):
             'dox.config.travis_yaml.TravisYaml.exists',
             base.bool_to_fake(self.travis_yaml)))
         self.useFixture(fixtures.MonkeyPatch(
-            'dox.config.dox_yaml.DoxYaml.get_payload',
+            'dox.config.dox_yaml.DoxYaml.get_commands',
             base.get_fake_value(self.dox_value)))
         self.useFixture(fixtures.MonkeyPatch(
-            'dox.config.tox_ini.ToxIni.get_payload',
+            'dox.config.tox_ini.ToxIni.get_commands',
             base.get_fake_value(self.tox_value)))
         self.useFixture(fixtures.MonkeyPatch(
-            'dox.config.travis_yaml.TravisYaml.get_payload',
+            'dox.config.travis_yaml.TravisYaml.get_commands',
             base.get_fake_value(self.travis_value)))
 
-    def test_payload(self):
-        p = payloads.Payload()
-        self.assertEqual(p.payload, self.payload)
+    def test_commands(self):
+        p = commands.Commands()
+        self.assertEqual(p.commands, self.commands)
 
 
 def load_tests(loader, in_tests, pattern):

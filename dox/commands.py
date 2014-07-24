@@ -14,8 +14,8 @@
 # limitations under the License.
 
 __all__ = [
-    'get_payload',
-    'Payload',
+    'get_commands',
+    'Commands',
 ]
 
 import dox.config.dox_yaml
@@ -23,30 +23,30 @@ import dox.config.tox_ini
 import dox.config.travis_yaml
 
 
-def get_payload():
+def get_commands():
     '''Examine the local environment and figure out what we should run.'''
 
     dox_yaml = dox.config.dox_yaml.get_dox_yaml()
     tox_ini = dox.config.tox_ini.get_tox_ini()
     travis_yaml = dox.config.travis_yaml.get_travis_yaml()
 
-    payload = None
+    commands = None
     for source in (dox_yaml, tox_ini, travis_yaml):
-        if payload is None and source.exists():
-            payload = source.get_payload(payload)
-    return payload
+        if commands is None and source.exists():
+            commands = source.get_commands(commands)
+    return commands
 
 
-class Payload(object):
+class Commands(object):
 
     def __init__(self):
-        self.payload = get_payload()
+        self.commands = get_commands()
         self.args = []
 
     def __str__(self):
-        if hasattr(self.payload, 'append'):
-            return "\n".join(self.payload)
-        return self.payload + ' ' + ' '.join(self.args)
+        if hasattr(self.commands, 'append'):
+            return "\n".join(self.commands)
+        return self.commands + ' ' + ' '.join(self.args)
 
     def append(self, args):
         self.args = args
