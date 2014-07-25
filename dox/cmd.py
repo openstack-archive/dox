@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
-
 import argparse
-import sh
+import logging
 
 import dox.commands
 import dox.images
@@ -79,6 +77,7 @@ def main():
             command.append(args.extra_args)
     try:
         return dox.runner.Runner(args).run(image, command)
-    except sh.ErrorReturnCode as e:
-        logger.error("Operation failed, aborting dox.")
+    except Exception:
+        logger.error(
+            "Operation failed, aborting dox.", exc_info=args.debug)
         return 1

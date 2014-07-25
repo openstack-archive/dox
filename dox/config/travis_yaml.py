@@ -51,7 +51,7 @@ class TravisYaml(object):
         prep = []
 
         for key in ('before_install', 'install', 'before_script'):
-            if travis_yaml.has_key(key):
+            if key in travis_yaml:
                 val = travis_yaml[key]
                 if hasattr(val, 'append'):
                     prep.extend(val)

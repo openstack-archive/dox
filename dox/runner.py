@@ -19,12 +19,12 @@ __all__ = [
 
 import logging
 import os
-import shutil
 import shlex
+import shutil
+import subprocess
+import sys
 import tempfile
 import textwrap
-
-import sh
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +37,48 @@ class Runner(object):
         self.base_image_name = 'dox/%s/base' % self.project
         self.test_image_name = 'dox/%s/test' % self.project
 
+    def _docker_build(self, image, image_dir='.'):
+        logger.info('Building image %s' % image)
+        self._docker_cmd('build', '-t', image, image_dir)
+
+    def _docker_run(self, *args):
+        logger.info('Running docker')
+        self._docker_cmd('run', *args)
+
+    def _docker_cmd(self, *args):
+        base_docker = ['docker']
+        if self.args.debug:
+            base_docker.append('-D')
+        try:
+            self._run_shell_command(base_docker + list(args))
+        except Exception as e:
+            logger.error("docker failed")
+            logger.info(e.stderr)
+            raise
+
+    def _run_shell_command(self, cmd):
+
+        logger.debug('shell: ' + ' '.join(cmd))
+        if self.args.noop:
+            return
+
+        process = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        while True:
+            output = process.stdout.read(1)
+
+            if output == '' and process.poll() is not None:
+                break
+
+            if output != '' and self.args.verbose or self.args.debug:
+                sys.stdout.write(output)
+                sys.stdout.flush()
+
+        if process.returncode:
+            raise Exception(
+                "%s returned %d" % (cmd, process.returncode))
+
     def _indent(self, text):
         wrapper = textwrap.TextWrapper(
             initial_indent='    ', subsequent_indent='    ')
@@ -45,51 +87,34 @@ class Runner(object):
     def build_test_image(self, image, commands):
         logger.debug(
             "Building test image %(image)s with %(prep_commands)s" % dict(
-                image=self.base_image_name,
+                image=self.test_image_name,
                 prep_commands=commands.prep_commands()))
-        tempd = tempfile.mkdtemp()
-        with open(os.path.join(tempd, 'Dockerfile'), 'w') as dockerfile:
-            dockerfile.write("FROM %s\n" % image)
+
+        dockerfile = []
+        dockerfile.append("FROM %s" % image)
+        try:
+            tempd = tempfile.mkdtemp()
             for add_file in commands.get_add_files():
                 shutil.copy(add_file, os.path.join(tempd, add_file))
-                dockerfile.write("ADD %s /dox\n" % add_file)
-            dockerfile.write("WORKDIR /dox\n")
+                dockerfile.append("ADD %s /dox" % add_file)
+            dockerfile.append("WORKDIR /dox")
             for command in commands.prep_commands():
-                dockerfile.write("RUN %s\n" % command)
-        logger.debug(
-            "Dockerfile:\n" +
-            self._indent(sh.cat(os.path.join(tempd, 'Dockerfile')).stdout))
-        try:
-            if not self.args.noop:
-                sh.docker.build('-t', self.test_image_name, tempd)
-        except Exception as e:
-            log.error("Test image build failed")
-            log.info(e.message)
-            raise
+                dockerfile.append("RUN %s\n" % command)
+            dockerfile = '\n'.join(dockerfile)
+            open(os.path.join(tempd, 'Dockerfile'), 'w').write(dockerfile)
+            logger.debug("Dockerfile:\n" + self._indent(dockerfile))
+            self._docker_build(self.test_image_name, tempd)
         finally:
             shutil.rmtree(tempd)
 
     def run_commands(self, command):
-        try:
-            if not self.args.noop:
-                sh.docker.run(
-                    '--rm',
-                    '-v', "%s:/src" % os.path.abspath('.'),
-                    '-w', '/src', self.test_image_name, *command)
-        except sh.ErrorReturnCode as e:
-            logger.error("Commands failed: %s" % e.message)
-            raise
+        self._docker_run(
+            '--rm',
+            '-v', "%s:/src" % os.path.abspath('.'),
+            '-w', '/src', self.test_image_name, *command)
 
     def build_base_image(self):
-        logger.info(
-            "Building base image %s from Dockerfile" % self.base_image_name)
-        if not self.args.noop:
-            try:
-                sh.docker.build('-t', self.base_image_name, '.')
-            except sh.ErrorReturnCode as e:
-                logger.error("Commands failed")
-                logger.info(e.stderr)
-                raise
+        self._docker_build(self.base_image_name)
 
     def run(self, image, command):
         logger.debug(

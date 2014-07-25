@@ -30,12 +30,10 @@ def get_commands():
     tox_ini = dox.config.tox_ini.get_tox_ini()
     travis_yaml = dox.config.travis_yaml.get_travis_yaml()
 
-    commands = None
-    prep_commands = None
     for source in (dox_yaml, tox_ini, travis_yaml):
         if source.exists():
             return source
-    return commands
+    raise Exception("dox cannot figure out what command to run")
 
 
 class Commands(object):
