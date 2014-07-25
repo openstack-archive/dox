@@ -45,8 +45,10 @@ class Commands(object):
     def test_command(self):
         commands = self.source.get_commands()
         if hasattr(commands, 'append'):
-            return "\n".join(commands)
-        return commands + ' ' + ' '.join(self.args)
+            ret = "\n".join(commands)
+        else:
+            ret = commands + ' ' + ' '.join(self.args)
+        return ret.strip()
 
     def prep_commands(self):
         return self.source.get_prep_commands()

@@ -61,16 +61,6 @@ def fake_does_not_exist(self):
     return False
 
 
-def get_fake_value(value):
-    if value:
-        def fake_value(self, image):
-            return value
-    else:
-        def fake_value(self, image):
-            return image
-    return fake_value
-
-
 def bool_to_fake(val):
     if val:
         return fake_does_exist

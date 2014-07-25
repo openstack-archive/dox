@@ -28,6 +28,16 @@ from dox import images
 from dox.tests import base
 
 
+def get_fake_image(value):
+    if value:
+        def fake_value(self, image):
+            return value
+    else:
+        def fake_value(self, image):
+            return image
+    return fake_value
+
+
 class TestImages(base.TestCase):
 
     scenarios = [
@@ -79,10 +89,10 @@ class TestImages(base.TestCase):
             base.bool_to_fake(self.tox_ini)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.dox_yaml.DoxYaml.get_image',
-            base.get_fake_value(self.dox_value)))
+            get_fake_image(self.dox_value)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.tox_ini.ToxIni.get_image',
-            base.get_fake_value(self.tox_value)))
+            get_fake_image(self.tox_value)))
 
     def test_images(self):
         image = images.get_image()

@@ -28,6 +28,12 @@ from dox import commands
 from dox.tests import base
 
 
+def get_fake_command(value):
+    def fake_value(self):
+        return value
+    return fake_value
+
+
 class TestCommands(base.TestCase):
 
     scenarios = [
@@ -44,17 +50,9 @@ class TestCommands(base.TestCase):
             dox_yaml=False, tox_ini=True, travis_yaml=False,
             dox_value=None, tox_value="setup.py test", travis_value=None,
             commands="setup.py test")),
-        ('tox_ignore_others', dict(
-            dox_yaml=True, tox_ini=True, travis_yaml=False,
-            dox_value=None, tox_value="setup.py test", travis_value="ruby",
-            commands="setup.py test")),
         ('travis_yaml', dict(
             dox_yaml=False, tox_ini=False, travis_yaml=True,
             dox_value="testr run", tox_value=None, travis_value="ruby",
-            commands="ruby")),
-        ('travis_fallthrough', dict(
-            dox_yaml=True, tox_ini=True, travis_yaml=True,
-            dox_value=None, tox_value=None, travis_value="ruby",
             commands="ruby")),
     ]
 
@@ -71,17 +69,17 @@ class TestCommands(base.TestCase):
             base.bool_to_fake(self.travis_yaml)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.dox_yaml.DoxYaml.get_commands',
-            base.get_fake_value(self.dox_value)))
+            get_fake_command(self.dox_value)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.tox_ini.ToxIni.get_commands',
-            base.get_fake_value(self.tox_value)))
+            get_fake_command(self.tox_value)))
         self.useFixture(fixtures.MonkeyPatch(
             'dox.config.travis_yaml.TravisYaml.get_commands',
-            base.get_fake_value(self.travis_value)))
+            get_fake_command(self.travis_value)))
 
     def test_commands(self):
         p = commands.Commands()
-        self.assertEqual(p.commands, self.commands)
+        self.assertEqual(p.test_command(), self.commands)
 
 
 def load_tests(loader, in_tests, pattern):
