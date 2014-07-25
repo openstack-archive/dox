@@ -22,6 +22,7 @@ import os
 import shutil
 import shlex
 import tempfile
+import textwrap
 
 import sh
 
@@ -32,12 +33,20 @@ class Runner(object):
 
     def __init__(self, args):
         self.args = args
+        self.project = os.path.basename(os.path.abspath('.'))
+        self.base_image_name = 'dox/%s/base' % self.project
+        self.test_image_name = 'dox/%s/test' % self.project
 
-    def get_tagname(self, tag):
-        project = os.path.basename(os.path.abspath('.'))
-        return "%s/%s" % (project, tag)
+    def _indent(self, text):
+        wrapper = textwrap.TextWrapper(
+            initial_indent='    ', subsequent_indent='    ')
+        return '\n'.join([wrapper.fill(line) for line in text.split('\n')])
 
     def build_test_image(self, image, commands):
+        logger.debug(
+            "Building test image %(image)s with %(prep_commands)s" % dict(
+                image=self.base_image_name,
+                prep_commands=commands.prep_commands()))
         tempd = tempfile.mkdtemp()
         with open(os.path.join(tempd, 'Dockerfile'), 'w') as dockerfile:
             dockerfile.write("FROM %s\n" % image)
@@ -47,46 +56,50 @@ class Runner(object):
             dockerfile.write("WORKDIR /dox\n")
             for command in commands.prep_commands():
                 dockerfile.write("RUN %s\n" % command)
-        logger.debug(sh.cat(os.path.join(tempd, 'Dockerfile')).stdout)
+        logger.debug(
+            "Dockerfile:\n" +
+            self._indent(sh.cat(os.path.join(tempd, 'Dockerfile')).stdout))
         try:
             if not self.args.noop:
-                sh.docker.build('-t', self.get_tagname("test"), tempd)
+                sh.docker.build('-t', self.test_image_name, tempd)
         except Exception as e:
-            raise e
+            log.error("Test image build failed")
+            log.info(e.message)
+            raise
         finally:
             shutil.rmtree(tempd)
 
     def run_commands(self, command):
-        if not self.args.noop:
-            sh.docker.run(
-                '--rm',
-                '-v', "%s:/src" % os.path.abspath('.'),
-                '-w', '/src', self.get_tagname('test'), *command)
+        try:
+            if not self.args.noop:
+                sh.docker.run(
+                    '--rm',
+                    '-v', "%s:/src" % os.path.abspath('.'),
+                    '-w', '/src', self.test_image_name, *command)
+        except sh.ErrorReturnCode as e:
+            logger.error("Commands failed: %s" % e.message)
+            raise
 
     def build_base_image(self):
-        image_name = self.get_tagname("base")
+        logger.info(
+            "Building base image %s from Dockerfile" % self.base_image_name)
         if not self.args.noop:
-            sh.docker.build('-t', image_name, '.')
-        return image_name
+            try:
+                sh.docker.build('-t', self.base_image_name, '.')
+            except sh.ErrorReturnCode as e:
+                logger.error("Commands failed")
+                logger.info(e.stderr)
+                raise
 
     def run(self, image, command):
         logger.debug(
-            "Going to run {0} in {1}".format(command.test_command(), image))
+            "Going to run %(command)s in %(image)s" % dict(
+                command=command.test_command(), image=image))
         if self.args.rebuild:
             logger.debug("Need to rebuild")
-        try:
-            if image is None:
-                image = self.build_base_image()
-            logger.debug(
-                "Test image {0} with {1}".format(
-                    image, command.prep_commands()))
-            self.build_test_image(image, command)
-        except sh.ErrorReturnCode as e:
-            logger.debug("build failed", e.message)
-            return 1
-        try:
-            self.run_commands(shlex.split(command.test_command()))
-        except sh.ErrorReturnCode as e:
-            logger.error("Commands failed")
-            logger.info(e.stderr)
-            return 1
+
+        if image is None:
+            self.build_base_image()
+        self.build_test_image(image, command)
+
+        self.run_commands(shlex.split(command.test_command()))

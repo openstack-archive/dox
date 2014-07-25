@@ -16,6 +16,7 @@
 import logging
 
 import argparse
+import sh
 
 import dox.commands
 import dox.images
@@ -66,8 +67,6 @@ def main():
     args = parser.parse_args()
 
     setup_logging(get_log_level(args))
-    logger.debug("This is debug")
-    logger.info("This is info")
 
     image = args.image
     if args.image is None:
@@ -78,4 +77,8 @@ def main():
         command = dox.commands.Commands()
         if args.extra_args:
             command.append(args.extra_args)
-    return dox.runner.Runner(args).run(image, command)
+    try:
+        return dox.runner.Runner(args).run(image, command)
+    except sh.ErrorReturnCode as e:
+        logger.error("Operation failed, aborting dox.")
+        return 1
