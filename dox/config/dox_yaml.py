@@ -46,8 +46,8 @@ class DoxYaml(object):
     def get_image(self, image):
         return self._open_dox_yaml().get('image', image)
 
-    def get_commands(self):
-        return self._open_dox_yaml().get('commands')
+    def get_commands(self, extra_args):
+        return self._open_dox_yaml().get('commands') + " ".join(extra_args)
 
     def get_prep_commands(self):
         return self._open_dox_yaml().get('prep')

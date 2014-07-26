@@ -72,9 +72,7 @@ def main():
     if args.command:
         command = " ".join(args.extra_args)
     else:
-        command = dox.commands.Commands()
-        if args.extra_args:
-            command.append(args.extra_args)
+        command = dox.commands.Commands(args.extra_args)
     try:
         return dox.runner.Runner(args).run(image, command)
     except Exception:

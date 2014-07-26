@@ -49,9 +49,15 @@ class ToxIni(object):
             image = ini.get('docker', 'image')
         return image
 
-    def get_commands(self):
+    def get_commands(self, extra_args):
         ini = self._open_tox_ini()
         commands = ini.get('testenv', 'commands')
+        extra_args = " ".join(extra_args)
+        if '{posargs}' in commands:
+            commands = commands.replace('{posargs}', extra_args)
+        else:
+            commands += " "
+            commands += extra_args
         return commands
 
     def get_prep_commands(self):
@@ -59,7 +65,7 @@ class ToxIni(object):
         deps = ""
         if ini.has_option('testenv', 'deps'):
             deps = ini.get('testenv', 'deps')
-        deps = deps.replace('{toxinidir}', '.').replace('\n', ' ')
+        deps = deps.replace('{toxinidir}', '/dox').replace('\n', ' ')
         if deps.strip() == '':
             return []
         install_command = "pip install -U"

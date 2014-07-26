@@ -38,12 +38,13 @@ def get_commands():
 
 class Commands(object):
 
-    def __init__(self):
+    def __init__(self, extra_args=[]):
         self.source = get_commands()
         self.args = []
+        self.extra_args = extra_args
 
     def test_command(self):
-        commands = self.source.get_commands()
+        commands = self.source.get_commands(self.extra_args)
         if hasattr(commands, 'append'):
             ret = "\n".join(commands)
         else:

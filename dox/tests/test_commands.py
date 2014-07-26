@@ -29,7 +29,7 @@ from dox.tests import base
 
 
 def get_fake_command(value):
-    def fake_value(self):
+    def fake_value(self, args):
         return value
     return fake_value
 

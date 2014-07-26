@@ -96,7 +96,7 @@ class Runner(object):
             tempd = tempfile.mkdtemp()
             for add_file in commands.get_add_files():
                 shutil.copy(add_file, os.path.join(tempd, add_file))
-                dockerfile.append("ADD %s /dox" % add_file)
+                dockerfile.append("ADD %s /dox/" % add_file)
             dockerfile.append("WORKDIR /dox")
             for command in commands.prep_commands():
                 dockerfile.append("RUN %s\n" % command)
