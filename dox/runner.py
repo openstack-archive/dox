@@ -116,6 +116,10 @@ class Runner(object):
         dockerfile.append("FROM %s" % image)
         try:
             tempd = tempfile.mkdtemp()
+            dockerfile.append(
+                "RUN groupadd -g %(gid)s %(user)s"
+                " && useradd -d /src -g %(gid)s -u %(uid)s %(user)s" % dict(
+                    uid=os.getuid(), gid=os.getgid(), user=os.getlogin()))
             for add_file in commands.get_add_files():
                 shutil.copy(add_file, os.path.join(tempd, add_file))
                 dockerfile.append("ADD %s /dox/" % add_file)
@@ -131,7 +135,7 @@ class Runner(object):
 
     def run_commands(self, command):
         self._docker_run(
-            '--rm',
+            '--rm', '--user=%s' % os.getlogin(),
             '-v', "%s:/src" % os.path.abspath('.'),
             '-w', '/src', self.test_image_name, *command)
 
