@@ -84,11 +84,33 @@ class Runner(object):
             initial_indent='    ', subsequent_indent='    ')
         return '\n'.join([wrapper.fill(line) for line in text.split('\n')])
 
+    def _get_image_list(self):
+
+        process = subprocess.Popen(
+            shlex.split('docker images'),
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        out = process.communicate()
+        if len(out) == 0 or not out[0] or not out[0].strip():
+            out_text = ''
+        out_text = out[0].strip().decode('utf-8')
+        return dict([f.split()[:2] for f in out_text.split('\n')])
+
+    def have_test_image(self):
+        if self.args.rebuild or self.args.rebuild_all:
+            return False
+        if self.test_image_name in self._get_image_list():
+            return True
+        return False
+
     def build_test_image(self, image, commands):
+
         logger.debug(
-            "Building test image %(image)s with %(prep_commands)s" % dict(
+            "Want test image %(image)s with %(prep_commands)s" % dict(
                 image=self.test_image_name,
                 prep_commands=commands.prep_commands()))
+        if self.have_test_image():
+            return
 
         dockerfile = []
         dockerfile.append("FROM %s" % image)
@@ -113,7 +135,18 @@ class Runner(object):
             '-v', "%s:/src" % os.path.abspath('.'),
             '-w', '/src', self.test_image_name, *command)
 
+    def have_base_image(self):
+        if self.args.rebuild_all:
+            return False
+        if self.base_image_name in self._get_image_list():
+            return True
+        return False
+
     def build_base_image(self):
+
+        logger.debug("Want base image")
+        if self.have_base_image():
+            return
         self._docker_build(self.base_image_name)
 
     def run(self, image, command):
