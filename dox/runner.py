@@ -81,7 +81,7 @@ class Runner(object):
 
     def _indent(self, text):
         wrapper = textwrap.TextWrapper(
-            initial_indent='    ', subsequent_indent='    ')
+            initial_indent='    ', subsequent_indent='        ')
         return '\n'.join([wrapper.fill(line) for line in text.split('\n')])
 
     def _get_image_list(self):
