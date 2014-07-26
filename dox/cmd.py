@@ -26,8 +26,8 @@ logger = logging.getLogger(__name__)
 def get_log_level(args):
     if args.debug:
         return logging.DEBUG
-    if args.verbose:
-        return logging.INFO
+    if args.quiet:
+        return logging.WARN
     return logging.WARN
 
 
@@ -57,8 +57,8 @@ def main():
                         action='store_true', help='Rebuild all images')
     parser.add_argument('-d', '--debug', dest='debug', default=False,
                         action='store_true', help='Debug mode')
-    parser.add_argument('-v', '--verbose', dest='verbose', default=False,
-                        action='store_true', help='Verbose output')
+    parser.add_argument('-q', '--quiet', dest='quiet', default=False,
+                        action='store_true', help='Quiet output')
     parser.add_argument('-n', '--noop', dest='noop', default=False,
                         action='store_true',
                         help="Don't actually execute commands")

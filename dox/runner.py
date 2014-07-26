@@ -71,7 +71,7 @@ class Runner(object):
             if output == '' and process.poll() is not None:
                 break
 
-            if output != '' and self.args.verbose or self.args.debug:
+            if output != '' and not self.args.quiet:
                 sys.stdout.write(output)
                 sys.stdout.flush()
 
