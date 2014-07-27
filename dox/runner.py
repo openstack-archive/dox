@@ -118,7 +118,7 @@ class Runner(object):
             tempd = tempfile.mkdtemp()
             dockerfile.append(
                 "RUN groupadd -g %(gid)s %(user)s"
-                " && useradd -d /src -g %(gid)s -u %(uid)s %(user)s" % dict(
+                " && useradd -M -d /src -g %(gid)s -u %(uid)s %(user)s" % dict(
                     uid=os.getuid(), gid=os.getgid(), user=os.getlogin()))
             for add_file in commands.get_add_files():
                 shutil.copy(add_file, os.path.join(tempd, add_file))
