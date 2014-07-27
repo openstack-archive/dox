@@ -17,6 +17,7 @@ import argparse
 import logging
 
 import dox.commands
+import dox.config.cmdline
 import dox.images
 import dox.runner
 
@@ -70,18 +71,23 @@ def main():
     args = parse_args()
     setup_logging(get_log_level(args))
 
-    run_dox(args)
+    return run_dox(args)
 
 
 def run_dox(args):
 
+    # Get Image
     image = args.image
     if args.image is None:
         image = dox.images.get_image()
+
+    # Get Command
     if args.command:
-        command = " ".join(args.extra_args)
+        command = dox.config.cmdline.CommandLine(args.extra_args)
     else:
         command = dox.commands.Commands(args.extra_args)
+
+    # Run
     try:
         return dox.runner.Runner(args).run(image, command)
     except Exception:
