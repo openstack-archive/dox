@@ -40,7 +40,7 @@ def setup_logging(level):
     logger.addHandler(handler)
 
 
-def main():
+def parse_args():
     parser = argparse.ArgumentParser(description='Run tests in docker.')
     parser.add_argument(dest='extra_args', nargs='*',
                         help='args to append to command, or command to run'
@@ -62,9 +62,18 @@ def main():
     parser.add_argument('-n', '--noop', dest='noop', default=False,
                         action='store_true',
                         help="Don't actually execute commands")
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def main():
+
+    args = parse_args()
     setup_logging(get_log_level(args))
+
+    run_dox(args)
+
+
+def run_dox(args):
 
     image = args.image
     if args.image is None:
