@@ -34,8 +34,8 @@ class Runner(object):
     def __init__(self, args):
         self.args = args
         self.project = os.path.basename(os.path.abspath('.'))
-        self.base_image_name = 'dox/%s/base' % self.project
-        self.test_image_name = 'dox/%s/test' % self.project
+        self.base_image_name = 'dox_%s_base' % self.project
+        self.test_image_name = 'dox_%s_test' % self.project
 
     def _docker_build(self, image, image_dir='.'):
         logger.info('Building image %s' % image)
@@ -134,6 +134,7 @@ class Runner(object):
 
     def run_commands(self, command):
         self._docker_run(
+            '--privileged=true',
             '--rm', '--user=%s' % os.getlogin(),
             '-v', "%s:/src" % os.path.abspath('.'),
             '-w', '/src', self.test_image_name, *command)
