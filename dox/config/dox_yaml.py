@@ -50,7 +50,7 @@ class DoxYaml(object):
         return " ".join([self._open_dox_yaml().get('commands')] + extra_args)
 
     def get_prep_commands(self):
-        return self._open_dox_yaml().get('prep')
+        return self._open_dox_yaml().get('prep', [])
 
     def get_add_files(self):
         return self._open_dox_yaml().get('add', [])
