@@ -134,6 +134,7 @@ class Runner(object):
 
     def run_commands(self, command):
         self._docker_run(
+            '--privileged=true',
             '--rm', '--user=%s' % os.getlogin(),
             '-v', "%s:/src" % os.path.abspath('.'),
             '-w', '/src', self.test_image_name, *command)
