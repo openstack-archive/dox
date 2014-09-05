@@ -53,4 +53,4 @@ class DoxYaml(object):
         return self._open_dox_yaml().get('prep')
 
     def get_add_files(self):
-        return self._open_dox_yaml().get('add')
+        return self._open_dox_yaml().get('add', [])
