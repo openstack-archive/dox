@@ -53,7 +53,7 @@ class Runner(object):
             self._run_shell_command(base_docker + list(args))
         except Exception as e:
             logger.error("docker failed")
-            logger.info(e.stderr)
+            logger.info(e)
             raise
 
     def _run_shell_command(self, cmd):
