@@ -43,37 +43,37 @@ class TestImages(base.TestCase):
     scenarios = [
         ('have_dockerfile', dict(
             dockerfile=True, tox_ini=False, dox_yaml=False,
-            tox_value=None,  dox_value=None, image=None)),
+            tox_value=None, dox_value=None, image=None)),
         ('no_dockerfile', dict(
             dockerfile=False, tox_ini=False, dox_yaml=False,
-            tox_value=None,  dox_value=None, image='ubuntu')),
+            tox_value=None, dox_value=None, image='ubuntu')),
         ('tox_no_docker', dict(
             dockerfile=False, tox_ini=True, dox_yaml=False,
-            tox_value=None,  dox_value=None, image='ubuntu')),
+            tox_value=None, dox_value=None, image='ubuntu')),
         ('tox_docker', dict(
             dockerfile=False, tox_ini=True, dox_yaml=False,
-            tox_value='tox_docker',  dox_value=None, image='tox_docker')),
+            tox_value='tox_docker', dox_value=None, image='tox_docker')),
         ('dox_image', dict(
             dockerfile=False, tox_ini=False, dox_yaml=True,
-            tox_value=None,  dox_value=None, image='ubuntu')),
+            tox_value=None, dox_value=None, image='ubuntu')),
         ('dox_no_image', dict(
             dockerfile=False, tox_ini=False, dox_yaml=True,
-            tox_value=None,  dox_value='dox_value', image='dox_value')),
+            tox_value=None, dox_value='dox_value', image='dox_value')),
         ('both_dox_wins', dict(
             dockerfile=False, tox_ini=True, dox_yaml=True,
-            tox_value='tox_wins',  dox_value='dox_wins', image='dox_wins')),
+            tox_value='tox_wins', dox_value='dox_wins', image='dox_wins')),
         ('both_no_dox', dict(
             dockerfile=False, tox_ini=True, dox_yaml=True,
-            tox_value='tox_wins',  dox_value=None, image='ubuntu')),
+            tox_value='tox_wins', dox_value=None, image='ubuntu')),
         ('both_dockerfile_passthru', dict(
             dockerfile=True, tox_ini=True, dox_yaml=True,
-            tox_value=None,  dox_value=None, image=None)),
+            tox_value=None, dox_value=None, image=None)),
         ('all_dockerfile_dox_override', dict(
             dockerfile=True, tox_ini=True, dox_yaml=True,
-            tox_value=None,  dox_value='dox_wins', image='dox_wins')),
+            tox_value=None, dox_value='dox_wins', image='dox_wins')),
         ('all_dockerfile_tox_loses', dict(
             dockerfile=True, tox_ini=True, dox_yaml=True,
-            tox_value='tox_wins',  dox_value=None, image=None)),
+            tox_value='tox_wins', dox_value=None, image=None)),
     ]
 
     def setUp(self):
