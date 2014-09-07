@@ -1,0 +1,48 @@
+Sometime there is some ideas that are just obvious that they are good
+ideas. When Monty
+[[http://article.gmane.org/gmane.comp.cloud.openstack.devel/34675][started to
+mention]] on the OpenStack development mailing
+list about a tool allowing to integrate docker containers to do the
+testing it was obvious it was those ideas that everybody was thinking
+about that it would be awesome if it was implemented and started to
+get used.
+
+The idea of dox is like the name imply is to slightly behave like
+the [[https://pypi.python.org/pypi/tox][tox]] tool but instead of running different virtualenvs you are
+using docker containers.
+
+The testing in the OpenStack world is a bit different than the other
+unit testing. Since OpenStack is inherently working with the local
+system components we have to get abstracted from the local developer
+box to match exactly the system components. In other words if we run
+testing against a zookeeper daemon of a specific version we want to
+make it sure and easy that this version has been installed.
+
+And that's where [[http://docker.io/][docker]] can help, since you can easily specify
+different images and how to build them making sure we have those tools
+installed when we run our testing targets.
+
+There is other issues with tox we have encountered in our extensive
+use of it in the OpenStack world we are hoping to solve
+here. virtualenv has been slow for us and we have come up with all
+sorts of hacks to get around it. And as monty mention in his mailing
+list post docker itself does an EXCELLENT job at handling caching and
+reuse where we easily see in the future those standard image built by
+the openstack-infra folks that we know works and validated in upstream
+openstack-ci published on [[https://registry.hub.docker.com/][dockerhub]] that
+everyone else (and dox) can use to run tests.
+
+The tool is available here in
+[[http://ci.openstack.org/stackforge.html][stackfoge]] here :
+
+https://git.openstack.org/cgit/stackforge/dox
+
+Its not quite ready yet but you can start running tests using it. If
+you want a fun project to work on that can help the whole Python
+development community (and not just OpenStack) come hack with us.
+
+If you are not familiar with the contribution process of
+Stackforge/OpenStack see this wiki page which should guide through
+it :
+
+http://wiki.openstack.org/HowToContribute
