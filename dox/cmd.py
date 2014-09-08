@@ -75,6 +75,7 @@ def main():
 
 
 def run_dox(args):
+    dox.runner.Runner(args).is_docker_installed()
 
     # Get Image
     image = args.image

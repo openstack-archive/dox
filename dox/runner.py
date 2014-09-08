@@ -37,6 +37,16 @@ class Runner(object):
         self.base_image_name = 'dox_%s_base' % self.project
         self.test_image_name = 'dox_%s_test' % self.project
 
+    def is_docker_installed(self):
+        try:
+            self._docker_cmd("version")
+        except OSError as e:
+            if e.errno == 2:
+                logger.error('docker seems not installed')
+                if not self.args.debug:
+                    sys.exit(1)
+            raise
+
     def _docker_build(self, image, image_dir='.'):
         logger.info('Building image %s' % image)
         self._docker_cmd('build', '-t', image, image_dir)
