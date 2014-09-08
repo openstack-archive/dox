@@ -22,7 +22,6 @@ import os
 import shlex
 import shutil
 import subprocess
-import sys
 import tempfile
 import textwrap
 
@@ -36,6 +35,16 @@ class Runner(object):
         self.project = os.path.basename(os.path.abspath('.'))
         self.base_image_name = 'dox_%s_base' % self.project
         self.test_image_name = 'dox_%s_test' % self.project
+
+    def is_docker_installed(self):
+        try:
+            self._docker_cmd("version")
+        except OSError as e:
+            if e.errno == 2:
+                logger.error('docker does not seem installed')
+                if not self.args.debug:
+                    return False
+            raise
 
     def _docker_build(self, image, image_dir='.'):
         logger.info('Building image %s' % image)
