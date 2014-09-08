@@ -1,4 +1,5 @@
-image: infra/trusty
+images:
+    - infra/trusty
 add:
   - requirements.txt
   - test-requirements.txt

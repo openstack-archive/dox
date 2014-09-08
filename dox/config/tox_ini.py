@@ -43,11 +43,10 @@ class ToxIni(object):
     def exists(self):
         return os.path.exists('tox.ini')
 
-    def get_image(self, image):
+    def get_images(self):
         ini = self._open_tox_ini()
-        if ini.has_option('docker', 'image'):
-            image = ini.get('docker', 'image')
-        return image
+        if ini.has_option('docker', 'images'):
+            return ini.get('docker', 'images', '').split(',')
 
     def get_commands(self, extra_args):
         ini = self._open_tox_ini()
