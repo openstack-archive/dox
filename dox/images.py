@@ -22,21 +22,24 @@ import dox.config.dox_yaml
 import dox.config.tox_ini
 
 
-def get_image():
+def get_images():
     '''Examine the local environment and figure out where we should run.'''
 
     dockerfile = dox.config.dockerfile.get_dockerfile()
     dox_yaml = dox.config.dox_yaml.get_dox_yaml()
     tox_ini = dox.config.tox_ini.get_tox_ini()
 
-    # Set default image value
     if dockerfile.exists():
-        image = None
+        default_images = []
     else:
-        image = 'ubuntu'
+        # NOTE(flaper87): We should probably raise
+        # `RuntimeError` if no image was specified
+        default_images = ['ubuntu']
 
+    images = []
     if dox_yaml.exists():
-        image = dox_yaml.get_image(image)
+        images = dox_yaml.get_images()
     elif tox_ini.exists():
-        image = tox_ini.get_image(image)
-    return image
+        images = tox_ini.get_images()
+
+    return images or default_images

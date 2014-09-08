@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import argparse
+import functools
 import logging
 
 import dox.commands
@@ -46,8 +47,8 @@ def parse_args():
     parser.add_argument(dest='extra_args', nargs='*',
                         help='args to append to command, or command to run'
                              ' if -c is given')
-    parser.add_argument('-i', '--image', dest='image',
-                        help='Base image to use')
+    parser.add_argument('-i', '--images', dest='images',
+                        help='Base images to use')
     parser.add_argument('-c', '--command', dest='command', default=False,
                         action='store_true',
                         help='Treat arguments as the entire command to run')
@@ -77,9 +78,10 @@ def main():
 def run_dox(args):
 
     # Get Image
-    image = args.image
-    if args.image is None:
-        image = dox.images.get_image()
+    if args.images is None:
+        images = dox.images.get_images()
+    else:
+        images = args.images.split(',')
 
     # Get Command
     if args.command:
@@ -89,7 +91,9 @@ def run_dox(args):
 
     # Run
     try:
-        return dox.runner.Runner(args).run(image, command)
+        run = functools.partial(dox.runner.Runner(args).run,
+                                command=command)
+        map(run, images)
     except Exception:
         logger.error(
             "Operation failed, aborting dox.", exc_info=args.debug)
