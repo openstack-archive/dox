@@ -1,4 +1,4 @@
-FROM fedora
+FROM fedora:20
 MAINTAINER OpenStack <openstack-dev@lists.openstack.org>
 
 RUN yum -y update
