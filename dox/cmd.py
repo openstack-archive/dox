@@ -15,6 +15,7 @@
 
 import argparse
 import logging
+import sys
 
 import dox.commands
 import dox.config.cmdline
@@ -75,6 +76,8 @@ def main():
 
 
 def run_dox(args):
+    if not dox.runner.Runner(args).is_docker_installed():
+        sys.exit(1)
 
     # Get Image
     image = args.image
