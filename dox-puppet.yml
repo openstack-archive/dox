@@ -1,0 +1,2 @@
+image: infra/trusty/ruby
+commands: bundle exec rake spec SPEC_OPTS='--format documentation'
