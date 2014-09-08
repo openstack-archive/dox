@@ -1,5 +1,5 @@
 images:
-    - infra/trusty
+  - infra/trusty/python
 add:
   - requirements.txt
   - test-requirements.txt
