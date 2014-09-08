@@ -43,8 +43,8 @@ class DoxYaml(object):
     def exists(self):
         return os.path.exists('dox.yml')
 
-    def get_image(self, image):
-        return self._open_dox_yaml().get('image', image)
+    def get_images(self):
+        return self._open_dox_yaml().get('images', [])
 
     def get_commands(self, extra_args):
         return " ".join([self._open_dox_yaml().get('commands')] + extra_args)
