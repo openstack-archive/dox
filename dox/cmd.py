@@ -29,12 +29,12 @@ def get_log_level(args):
         return logging.DEBUG
     if args.quiet:
         return logging.WARN
-    return logging.WARN
+    return logging.INFO
 
 
 def setup_logging(level):
     handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    formatter = logging.Formatter('%(levelname)s|%(name)s|%(message)s')
     handler.setFormatter(formatter)
     logger = logging.getLogger('dox')
     logger.setLevel(level)
