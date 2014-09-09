@@ -145,11 +145,15 @@ class Runner(object):
             shutil.rmtree(tempd)
 
     def run_commands(self, command):
-        self._docker_run(
-            '--privileged=true',
-            '--rm', '--user=%s' % os.getlogin(),
-            '-v', "%s:/src" % os.path.abspath('.'),
-            '-w', '/src', self.test_image_name, *command)
+        docker_args = ['--privileged=true',
+                       '--user=%s' % os.getlogin(),
+                       '-v', "%s:/src" % os.path.abspath('.'),
+                       '-w', '/src',
+                       self.test_image_name]
+        if not self.args.keep_image:
+            docker_args.append('--rm')
+        docker_args.append(*command)
+        self._docker_run(*docker_args)
 
     def have_base_image(self):
         if self.args.rebuild_all:
