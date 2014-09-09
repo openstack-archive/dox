@@ -65,6 +65,9 @@ def parse_args():
     parser.add_argument('-n', '--noop', dest='noop', default=False,
                         action='store_true',
                         help="Don't actually execute commands")
+    parser.add_argument('-k', '--keep', dest='keep_image', default=False,
+                        action='store_true',
+                        help="Keep test container after command finishes")
     return parser.parse_args()
 
 
