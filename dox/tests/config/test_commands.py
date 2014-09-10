@@ -39,20 +39,20 @@ class TestCommands(base.TestCase):
     scenarios = [
         ('dox_yaml', dict(
             dox_yaml=True, tox_ini=False, travis_yaml=False,
-            dox_value="testr run", tox_value=None, travis_value=None,
+            dox_value=["testr run"], tox_value=None, travis_value=None,
             commands="testr run")),
         ('dox_yaml_ignore_others', dict(
             dox_yaml=True, tox_ini=True, travis_yaml=True,
-            dox_value="testr run", tox_value="setup.py test",
-            travis_value="gem test",
+            dox_value=["testr run"], tox_value=["setup.py test"],
+            travis_value=["gem test"],
             commands="testr run")),
         ('tox_ini', dict(
             dox_yaml=False, tox_ini=True, travis_yaml=False,
-            dox_value=None, tox_value="setup.py test", travis_value=None,
+            dox_value=None, tox_value=["setup.py test"], travis_value=None,
             commands="setup.py test")),
         ('travis_yaml', dict(
             dox_yaml=False, tox_ini=False, travis_yaml=True,
-            dox_value="testr run", tox_value=None, travis_value="ruby",
+            dox_value=["testr run"], tox_value=None, travis_value=["ruby"],
             commands="ruby")),
     ]
 

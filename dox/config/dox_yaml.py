@@ -54,7 +54,7 @@ class DoxYaml(base.ConfigBase):
         return self._open_dox_yaml().get('images', [])
 
     def get_commands(self, extra_args):
-        return " ".join([self._open_dox_yaml().get('commands')] + extra_args)
+        return self._open_dox_yaml().get('commands', [])
 
     def get_prep_commands(self):
         return self._open_dox_yaml().get('prep', [])

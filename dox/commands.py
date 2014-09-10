@@ -19,11 +19,11 @@ __all__ = [
 ]
 
 import logging
+import os
 
 import dox.config.dox_yaml
 import dox.config.tox_ini
 import dox.config.travis_yaml
-
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,6 @@ def get_commands():
 
     for source in (dox_yaml, tox_ini, travis_yaml):
         if source.exists():
-            logger.debug("Command source is: %s" % source.source_name())
             return source
     raise Exception("dox cannot figure out what command to run")
 
@@ -49,12 +48,42 @@ class Commands(object):
         self.args = []
         self.extra_args = extra_args
 
+    def _test_command_as_script(self, commands, shell='/bin/sh'):
+        """Combine test commands into a master script file.
+
+        The script, using the given shell, will be created in the .dox
+        subdirectory of the current directory.
+
+        :param commands: A list of commands to execute.
+        :param shell: Path to the OS shell to run the commands.
+        """
+        dox_dir = '.dox'
+        master_script = os.path.join(dox_dir, 'master_script.sh')
+
+        if not os.path.exists(dox_dir):
+            os.mkdir(dox_dir, 0o755)
+
+        with open(master_script, "w") as f:
+            f.write("#!" + shell + "\n")
+            f.write("\n".join(commands))
+            f.write("\n")
+
+        os.chmod(master_script, 0o700)
+        return master_script
+
     def test_command(self):
+        """Return the command to execute in the container.
+
+        If there is more than one command, we combine them into a master
+        script to execute. Otherwise, we just issue the command normally
+        on the docker command line.
+        """
         commands = self.source.get_commands(self.extra_args)
-        if hasattr(commands, 'append'):
-            ret = "\n".join(commands)
-        else:
-            ret = commands + ' ' + ' '.join(self.args)
+
+        if len(commands) > 1:
+            return self._test_command_as_script(commands)
+
+        ret = commands[0] + ' ' + ' '.join(self.args)
         return ret.strip()
 
     def prep_commands(self):

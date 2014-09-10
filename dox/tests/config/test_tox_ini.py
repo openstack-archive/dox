@@ -51,10 +51,7 @@ class TestToxIni(base.TestCase):
                          self.toxini.get_images())
 
     def test_get_commands(self):
-        self.assertEqual('foobar -c',
-                         self.toxini.get_commands(['-c']))
-
-        self.assertEqual('foobar -c blah',
+        self.assertEqual(['foobar -c blah'],
                          self.toxini.get_commands(
                              ['-c'], section='testenv2'))
 

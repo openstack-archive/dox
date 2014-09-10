@@ -89,8 +89,10 @@ def run_dox(args):
     # Get Command
     if args.command:
         command = dox.config.cmdline.CommandLine(args.extra_args)
+        logger.debug("Command source is the command line")
     else:
         command = dox.commands.Commands(args.extra_args)
+        logger.debug("Command source is %s" % command.source.source_name())
 
     # Run
     try:
@@ -98,6 +100,5 @@ def run_dox(args):
                                 command=command)
         map(run, images)
     except Exception:
-        logger.error(
-            "Operation failed, aborting dox.", exc_info=args.debug)
+        logger.error("Operation failed, aborting dox.", exc_info=args.debug)
         return 1
