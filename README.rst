@@ -108,6 +108,19 @@ re-installing the source into the system can be minimized.
 
 Advanced
 --------
-The dox.yml file can reference multiple images, such as if your test suite
-needs things like a MySQL server. At least, that's the theory. This is not
-yet implemented.
+It is possible to specify multiple images to be used in a dox run.
+Images can be provided on the command line, via the dox.yml file, or the
+tox.ini file.
+
+For the command line, images should be provided via the --images option,
+in a comma-separated list.
+
+The tox.ini file should also use a comma-separated list.
+
+The dox.yml file should list images in an array.
+
+The same prep and command instructions will be executed on each image sequentially.
+
+dox does not currently allow for multiple images executing different tasks
+at this time.  However, it is a goal to allow for such test scenarios in 
+the future.
