@@ -56,15 +56,22 @@ class ToxIni(base.ConfigBase):
             return ini.get('docker', 'images', '').split(',')
 
     def get_commands(self, extra_args, section='testenv'):
+        """Get commands to run from the config file.
+
+        If any of the commands contain the string '{posargs}', then this
+        is replaced with the extra_args value.
+        """
         ini = self._open_tox_ini()
-        commands = ini.get(section, 'commands')
+        commands = ini.get(section, 'commands').split("\n")
         extra_args = " ".join(extra_args)
-        if '{posargs}' in commands:
-            commands = commands.replace('{posargs}', extra_args)
+
+        scrubbed = []
+        for cmd in commands:
+            if '{posargs}' in cmd:
+                scrubbed.append(cmd.replace('{posargs}', extra_args))
         else:
-            commands += " "
-            commands += extra_args
-        return commands
+            scrubbed.append(cmd)
+        return scrubbed
 
     def get_prep_commands(self):
         ini = self._open_tox_ini()
