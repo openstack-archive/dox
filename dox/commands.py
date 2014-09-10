@@ -18,6 +18,8 @@ __all__ = [
     'Commands',
 ]
 
+import os
+
 import dox.config.dox_yaml
 import dox.config.tox_ini
 import dox.config.travis_yaml
@@ -43,12 +45,38 @@ class Commands(object):
         self.args = []
         self.extra_args = extra_args
 
+    def _test_command_as_script(self, shell='/bin/sh'):
+        """ Combine test command(s) into a master script file.
+
+        The script, using the given shell, will be created in the .dox
+        subdirectory of the current directory.
+        """
+        dox_dir = '.dox'
+        master_script = os.path.join(dox_dir, 'master_script.sh')
+
+        if not os.path.exists(dox_dir):
+            os.mkdir(dox_dir, 0755)
+
+        with open(master_script, "w") as f:
+            f.write("#!" + shell + "\n")
+            f.write("\n".join(self.source.get_commands(self.extra_args)))
+
+        os.chmod(master_script, 0700)
+        return master_script
+
     def test_command(self):
+        """ Return the command to execute in the container.
+
+        If there is more than one command, we combine them into a master
+        script to execute. Otherwise, we just issue the command normally
+        on the docker command line.
+        """
         commands = self.source.get_commands(self.extra_args)
-        if hasattr(commands, 'append'):
-            ret = "\n".join(commands)
-        else:
-            ret = commands + ' ' + ' '.join(self.args)
+
+        if len(commands) > 1:
+            return self._test_command_as_script()
+
+        ret = commands[0] + ' ' + ' '.join(self.args)
         return ret.strip()
 
     def prep_commands(self):
