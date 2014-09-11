@@ -19,6 +19,7 @@ __all__ = [
 
 import logging
 import os
+import pwd
 import re
 import shlex
 import shutil
@@ -31,6 +32,9 @@ logger = logging.getLogger(__name__)
 
 INVALID_PROJECT = re.compile('[^a-z0-9-_.]')
 
+def current_user():
+    return pwd.getpwuid(os.getuid()).pw_name
+
 class Runner(object):
 
     def __init__(self, args):
@@ -38,6 +42,7 @@ class Runner(object):
         self.project = INVALID_PROJECT.sub('-', os.path.basename(os.path.abspath('.')))
         self.base_image_name = 'dox_%s_base' % self.project
         self.test_image_name = 'dox_%s_test' % self.project
+        self.current_user = current_user()
 
     def is_docker_installed(self):
         try:
@@ -132,7 +137,7 @@ class Runner(object):
             tempd = tempfile.mkdtemp()
             dockerfile.append(
                 "RUN useradd -M -U -d /src -u %(uid)s %(user)s" % dict(
-                    uid=os.getuid(), gid=os.getgid(), user=os.getlogin()))
+                    uid=os.getuid(), gid=os.getgid(), user=self.current_user))
             for add_file in commands.get_add_files():
                 shutil.copy(add_file, os.path.join(tempd, add_file))
                 dockerfile.append("ADD %s /dox/" % add_file)
@@ -149,7 +154,7 @@ class Runner(object):
     def run_commands(self, command):
         self._docker_run(
             '--privileged=true',
-            '--rm', '--user=%s' % os.getlogin(),
+            '--rm', '--user=%s' % self.current_user,
             '-v', "%s:/src" % os.path.abspath('.'),
             '-w', '/src', self.test_image_name, *command)
 
