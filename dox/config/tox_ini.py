@@ -33,24 +33,25 @@ def get_tox_ini():
 class ToxIni(object):
 
     _ini = None
+    tox_ini_file = 'tox.ini'
 
     def _open_tox_ini(self):
         if self._ini is None:
             self._ini = ConfigParser.ConfigParser()
-            self._ini.read('tox.ini')
+            self._ini.read(self.tox_ini_file)
         return self._ini
 
     def exists(self):
-        return os.path.exists('tox.ini')
+        return os.path.exists(self.tox_ini_file)
 
     def get_images(self):
         ini = self._open_tox_ini()
         if ini.has_option('docker', 'images'):
             return ini.get('docker', 'images', '').split(',')
 
-    def get_commands(self, extra_args):
+    def get_commands(self, extra_args, section='testenv'):
         ini = self._open_tox_ini()
-        commands = ini.get('testenv', 'commands')
+        commands = ini.get(section, 'commands')
         extra_args = " ".join(extra_args)
         if '{posargs}' in commands:
             commands = commands.replace('{posargs}', extra_args)

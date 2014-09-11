@@ -22,6 +22,9 @@ import testtools
 
 _TRUE_VALUES = ('true', '1', 'yes')
 
+TESTDIR = os.path.dirname(os.path.abspath(__file__))
+SAMPLEDIR = os.path.join(TESTDIR, 'samples')
+
 
 class TestCase(testtools.TestCase):
 
