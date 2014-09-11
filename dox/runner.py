@@ -19,6 +19,7 @@ __all__ = [
 
 import logging
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -28,12 +29,13 @@ import textwrap
 
 logger = logging.getLogger(__name__)
 
+INVALID_PROJECT = re.compile('[^a-z0-9-_.]')
 
 class Runner(object):
 
     def __init__(self, args):
         self.args = args
-        self.project = os.path.basename(os.path.abspath('.'))
+        self.project = INVALID_PROJECT.sub('-', os.path.basename(os.path.abspath('.')))
         self.base_image_name = 'dox_%s_base' % self.project
         self.test_image_name = 'dox_%s_test' % self.project
 
