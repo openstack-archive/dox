@@ -65,6 +65,9 @@ def parse_args():
     parser.add_argument('-n', '--noop', dest='noop', default=False,
                         action='store_true',
                         help="Don't actually execute commands")
+    parser.add_argunent('-p', '--project', dest='project', default=os.path.basename(os.path.abspath('.')),
+                        action='store_true',
+                        help="Name of the project")
     return parser.parse_args()
 
 

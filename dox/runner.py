@@ -39,7 +39,7 @@ class Runner(object):
 
     def __init__(self, args):
         self.args = args
-        self.project = INVALID_PROJECT.sub('-', os.path.basename(os.path.abspath('.')))
+        self.project = INVALID_PROJECT.sub('-', args.project)
         self.base_image_name = 'dox_%s_base' % self.project
         self.test_image_name = 'dox_%s_test' % self.project
         self.current_user = current_user()
