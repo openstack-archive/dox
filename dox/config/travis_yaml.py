@@ -13,13 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import yaml
+
+import dox.config.base as base
+
+
 __all__ = [
     'get_travis_yaml',
 ]
-
-import os
-
-import yaml
 
 _travis_yaml = None
 
@@ -31,9 +33,10 @@ def get_travis_yaml():
     return _travis_yaml
 
 
-class TravisYaml(object):
+class TravisYaml(base.ConfigBase):
 
     _yaml = None
+    _travis_file = 'travis.yml'
 
     def _open_travis_yaml(self):
         if self._yaml is None:
@@ -41,10 +44,13 @@ class TravisYaml(object):
                 self._yaml = yaml.load(f)
         return self._yaml
 
-    def exists(self):
-        return os.path.exists('travis.yml')
+    def source_name(self):
+        return self._travis_file
 
-    def get_command(self, command):
+    def exists(self):
+        return os.path.exists(self._travis_file)
+
+    def get_commands(self, command):
         return self._open_travis_yaml().get('script', command)
 
     def get_prep_commands(self):
@@ -58,4 +64,12 @@ class TravisYaml(object):
                     prep.extend(val)
                 else:
                     prep.append(val)
+        return []
+
+    # TODO(Shrews): Implement this
+    def get_add_files(self):
+        return []
+
+    # TODO(Shrews): Implement this
+    def get_images(self):
         return []

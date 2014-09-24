@@ -13,13 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import yaml
+
+import dox.config.base as base
+
+
 __all__ = [
     'get_dox_yaml',
 ]
-
-import os
-
-import yaml
 
 _dox_yaml = None
 
@@ -31,9 +33,10 @@ def get_dox_yaml():
     return _dox_yaml
 
 
-class DoxYaml(object):
+class DoxYaml(base.ConfigBase):
 
     _yaml = None
+    _dox_file = 'dox.yml'
 
     def _open_dox_yaml(self):
         if self._yaml is None:
@@ -41,8 +44,11 @@ class DoxYaml(object):
                 self._yaml = yaml.load(f)
         return self._yaml
 
+    def source_name(self):
+        return self._dox_file
+
     def exists(self):
-        return os.path.exists('dox.yml')
+        return os.path.exists(self._dox_file)
 
     def get_images(self):
         return self._open_dox_yaml().get('images', [])
