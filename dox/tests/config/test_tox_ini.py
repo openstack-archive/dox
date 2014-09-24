@@ -12,17 +12,20 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+
 import mock
 import os
+
+import dox.config.base as cfg_base
 
 from dox.config import tox_ini
 from dox.tests import base
 
 
-class TestImages(base.TestCase):
+class TestToxIni(base.TestCase):
 
     def setUp(self):
-        super(TestImages, self).setUp()
+        super(TestToxIni, self).setUp()
 
         self.toxini = tox_ini.ToxIni()
         self.toxini.tox_ini_file = os.path.join(base.SAMPLEDIR,
@@ -33,6 +36,9 @@ class TestImages(base.TestCase):
         with mock.patch.object(tox_ini, '_tox_ini', tox_ini_new):
             self.assertEqual(tox_ini.get_tox_ini(),
                              tox_ini_new)
+
+    def test_base_class(self):
+        self.assertIsInstance(self.toxini, cfg_base.ConfigBase)
 
     def test_exists_ini_file(self):
         self.assertTrue(self.toxini.exists())

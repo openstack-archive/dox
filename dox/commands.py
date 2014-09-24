@@ -18,9 +18,14 @@ __all__ = [
     'Commands',
 ]
 
+import logging
+
 import dox.config.dox_yaml
 import dox.config.tox_ini
 import dox.config.travis_yaml
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_commands():
@@ -32,6 +37,7 @@ def get_commands():
 
     for source in (dox_yaml, tox_ini, travis_yaml):
         if source.exists():
+            logger.debug("Command source is: %s" % source.source_name())
             return source
     raise Exception("dox cannot figure out what command to run")
 
