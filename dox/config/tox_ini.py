@@ -13,12 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import ConfigParser
+import os
+
+import dox.config.base as base
+
+
 __all__ = [
     'get_tox_ini',
 ]
-
-import ConfigParser
-import os
 
 _tox_ini = None
 
@@ -30,7 +33,7 @@ def get_tox_ini():
     return _tox_ini
 
 
-class ToxIni(object):
+class ToxIni(base.ConfigBase):
 
     _ini = None
     tox_ini_file = 'tox.ini'
@@ -40,6 +43,9 @@ class ToxIni(object):
             self._ini = ConfigParser.ConfigParser()
             self._ini.read(self.tox_ini_file)
         return self._ini
+
+    def source_name(self):
+        return self.tox_ini_file
 
     def exists(self):
         return os.path.exists(self.tox_ini_file)
