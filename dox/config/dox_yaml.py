@@ -37,7 +37,8 @@ class DoxYaml(object):
 
     def _open_dox_yaml(self):
         if self._yaml is None:
-            self._yaml = yaml.load(open('dox.yml', 'r'))
+            with open('dox.yml', 'r') as f:
+                self._yaml = yaml.load(f)
         return self._yaml
 
     def exists(self):
