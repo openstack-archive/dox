@@ -37,7 +37,8 @@ class TravisYaml(object):
 
     def _open_travis_yaml(self):
         if self._yaml is None:
-            self._yaml = yaml.load(open('travis.yml', 'r'))
+            with open('travis.yml', 'r') as f:
+                self._yaml = yaml.load(f)
         return self._yaml
 
     def exists(self):

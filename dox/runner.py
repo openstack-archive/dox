@@ -138,7 +138,8 @@ class Runner(object):
             for command in commands.prep_commands():
                 dockerfile.append("RUN %s\n" % command)
             dockerfile = '\n'.join(dockerfile)
-            open(os.path.join(tempd, 'Dockerfile'), 'w').write(dockerfile)
+            with open(os.path.join(tempd, 'Dockerfile'), 'w') as f:
+                f.write(dockerfile)
             logger.debug("Dockerfile:\n" + self._indent(dockerfile))
             self._docker_build(self.test_image_name, tempd)
         finally:
