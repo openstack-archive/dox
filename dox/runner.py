@@ -102,10 +102,8 @@ class Runner(object):
             shlex.split('docker images'),
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-        out = process.communicate()
-        if len(out) == 0 or not out[0] or not out[0].strip():
-            out_text = ''
-        out_text = out[0].strip().decode('utf-8')
+        stdout, _ = process.communicate()
+        out_text = stdout.strip().decode('utf-8') if stdout else ""
         return dict([f.split()[:2] for f in out_text.split('\n')])
 
     def have_test_image(self):
