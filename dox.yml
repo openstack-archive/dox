@@ -5,4 +5,5 @@ add:
   - test-requirements.txt
 prep:
   - pip install -U -r requirements.txt -r test-requirements.txt
-commands: python setup.py testr --slowest 
+commands: 
+  - python setup.py testr --slowest
