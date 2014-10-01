@@ -106,6 +106,23 @@ dox will attempt to reuse containers.  Since the source is bind-mounted into
 the container, things that might be expensive like copying source dirs or
 re-installing the source into the system can be minimized.
 
+Boot2Docker support
+-------------------
+
+To get support for non Linux OSes that doesn't support natively docker
+there is a tool called `boot2docker <http://boot2docker.io/>`_ which
+allows you to run a remote docker server in a VirtualBox VM and the
+client running on the non Linux desktop.
+
+There is no support for mounted volumes by default with `boot2docker` which is needed by `dox`.
+To get this feature you will need to follow these steps documented here :
+
+https://medium.com/boot2docker-lightweight-linux-for-docker/boot2docker-together-with-virtualbox-guest-additions-da1e3ab2465c
+
+When running dox you will need to specify the docker username from the boot2docker vm, commonly like this::
+
+  dox --user-map=docker:1000:10
+
 Advanced
 --------
 It is possible to specify multiple images to be used in a dox run.
