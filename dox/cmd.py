@@ -16,6 +16,7 @@
 import argparse
 import functools
 import logging
+import os
 import sys
 
 import dox.commands
@@ -65,6 +66,10 @@ def parse_args():
     parser.add_argument('-n', '--noop', dest='noop', default=False,
                         action='store_true',
                         help="Don't actually execute commands")
+    parser.add_argument('--user-map', default=os.environ.get("DOX_USER_MAP"),
+                        help='User to run the container to '
+                        'format is user:uid:gid, with boot2docker use '
+                        'docker:1000:10 (default to your current user)')
     return parser.parse_args()
 
 

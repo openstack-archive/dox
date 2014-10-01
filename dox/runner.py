@@ -36,6 +36,15 @@ class Runner(object):
         self.project = os.path.basename(os.path.abspath('.'))
         self.base_image_name = 'dox_%s_base' % self.project
         self.test_image_name = 'dox_%s_test' % self.project
+        self.user_map = self._get_user_mapping()
+
+    def _get_user_mapping(self):
+        """Get user mapping from command line or current user."""
+        if self.args.user_map:
+            username, uid, gid = self.args.user_map.split(':')
+        else:
+            username, uid, gid = (os.getlogin(), os.getuid(), os.getgid())
+        return {'username': username, 'uid': int(uid), 'gid': int(gid)}
 
     def is_docker_installed(self):
         try:
@@ -128,7 +137,9 @@ class Runner(object):
             tempd = tempfile.mkdtemp()
             dockerfile.append(
                 "RUN useradd -M -U -d /src -u %(uid)s %(user)s" % dict(
-                    uid=os.getuid(), gid=os.getgid(), user=os.getlogin()))
+                    uid=self.user_map['uid'],
+                    gid=self.user_map['gid'],
+                    user=self.user_map['username']))
             for add_file in commands.get_add_files():
                 shutil.copy(add_file, os.path.join(tempd, add_file))
                 dockerfile.append("ADD %s /dox/" % add_file)
@@ -146,7 +157,7 @@ class Runner(object):
     def run_commands(self, command):
         self._docker_run(
             '--privileged=true',
-            '--rm', '--user=%s' % os.getlogin(),
+            '--rm', '--user=%s' % self.user_map['username'],
             '-v', "%s:/src" % os.path.abspath('.'),
             '-w', '/src', self.test_image_name, *command)
 
