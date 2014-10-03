@@ -70,6 +70,9 @@ def parse_args():
                         help='User to run the container to '
                         'format is user:uid:gid, with boot2docker use '
                         'docker:1000:10 (default to your current user)')
+    parser.add_argument('-k', '--keep', dest='keep_image', default=False,
+                        action='store_true',
+                        help="Keep test container after command finishes")
     return parser.parse_args()
 
 
