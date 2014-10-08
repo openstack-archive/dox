@@ -26,10 +26,10 @@ __all__ = [
 _travis_yaml = None
 
 
-def get_travis_yaml():
+def get_travis_yaml(options):
     global _travis_yaml
     if _travis_yaml is None:
-        _travis_yaml = TravisYaml()
+        _travis_yaml = TravisYaml(options)
     return _travis_yaml
 
 
@@ -50,7 +50,7 @@ class TravisYaml(base.ConfigBase):
     def exists(self):
         return os.path.exists(self._travis_file)
 
-    def get_commands(self, command):
+    def get_commands(self, command, options=None):
         return self._open_travis_yaml().get('script', command)
 
     def get_prep_commands(self):
