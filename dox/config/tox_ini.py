@@ -13,8 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ConfigParser
+
 import os
+
+from six.moves.configparser import ConfigParser
 
 import dox.config.base as base
 
@@ -40,7 +42,7 @@ class ToxIni(base.ConfigBase):
 
     def _open_tox_ini(self):
         if self._ini is None:
-            self._ini = ConfigParser.ConfigParser()
+            self._ini = ConfigParser()
             self._ini.read(self.tox_ini_file)
         return self._ini
 
@@ -53,7 +55,7 @@ class ToxIni(base.ConfigBase):
     def get_images(self):
         ini = self._open_tox_ini()
         if ini.has_option('docker', 'images'):
-            return ini.get('docker', 'images', '').split(',')
+            return ini.get('docker', 'images').split(',')
 
     def get_commands(self, extra_args, section='testenv'):
         """Get commands to run from the config file.
