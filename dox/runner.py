@@ -134,7 +134,6 @@ class Runner(object):
         return False
 
     def build_test_image(self, image, commands):
-
         logger.debug(
             "Want test image %(image)s with %(prep_commands)s" % dict(
                 image=self.test_image_name,
