@@ -22,7 +22,7 @@ class TestTravisYaml(base.TestCase):
 
     def setUp(self):
         super(TestTravisYaml, self).setUp()
-        self.travisyaml = travis_yaml.TravisYaml()
+        self.travisyaml = travis_yaml.TravisYaml({})
 
     def test_base_class(self):
         self.assertIsInstance(self.travisyaml, cfg_base.ConfigBase)
