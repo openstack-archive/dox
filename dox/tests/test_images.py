@@ -96,7 +96,7 @@ class TestImages(base.TestCase):
             get_fake_image(self.tox_value)))
 
     def test_images(self):
-        image = images.get_images()
+        image = images.get_images({})
         self.assertEqual(image, self.images)
 
 

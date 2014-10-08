@@ -51,6 +51,9 @@ def parse_args():
                              ' if -c is given')
     parser.add_argument('-i', '--images', dest='images',
                         help='Base images to use')
+    parser.add_argument('-e', '--environment', dest='environment',
+                        default=None,
+                        help='Run target environment.')
     parser.add_argument('-c', '--command', dest='command', default=False,
                         action='store_true',
                         help='Treat arguments as the entire command to run')
@@ -93,9 +96,11 @@ def run_dox(args):
     if not dox.runner.Runner(args).is_docker_installed():
         sys.exit(1)
 
+    options = {'section': args.environment}
+
     # Get Image
     if args.images is None:
-        images = dox.images.get_images()
+        images = dox.images.get_images(options)
     else:
         images = args.images.split(',')
 
@@ -104,9 +109,8 @@ def run_dox(args):
         command = dox.config.cmdline.CommandLine(args.extra_args)
         logger.debug("Command source is the command line")
     else:
-        command = dox.commands.Commands(args.extra_args)
+        command = dox.commands.Commands(args.extra_args, options)
         logger.debug("Command source is %s" % command.source.source_name())
-
     # Run
     try:
         run = functools.partial(dox.runner.Runner(args).run,
