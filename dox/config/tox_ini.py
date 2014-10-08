@@ -57,12 +57,14 @@ class ToxIni(base.ConfigBase):
         if ini.has_option('docker', 'images'):
             return ini.get('docker', 'images').split(',')
 
-    def get_commands(self, extra_args, section='testenv'):
+    def get_commands(self, extra_args, options=None):
         """Get commands to run from the config file.
 
         If any of the commands contain the string '{posargs}', then this
         is replaced with the extra_args value.
         """
+        options = options or {}
+        section = options.get('section', 'testenv')
         ini = self._open_tox_ini()
         commands = ini.get(section, 'commands').split("\n")
         extra_args = " ".join(extra_args)

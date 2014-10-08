@@ -43,7 +43,8 @@ def get_commands():
 
 class Commands(object):
 
-    def __init__(self, extra_args=[]):
+    def __init__(self, extra_args=[], options=None):
+        self.options = options or {}
         self.source = get_commands()
         self.args = []
         self.extra_args = extra_args
@@ -78,7 +79,8 @@ class Commands(object):
         script to execute. Otherwise, we just issue the command normally
         on the docker command line.
         """
-        commands = self.source.get_commands(self.extra_args)
+        commands = self.source.get_commands(self.extra_args,
+                                            options=self.options)
 
         if len(commands) > 1:
             return self._test_command_as_script(commands)

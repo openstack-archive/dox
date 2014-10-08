@@ -50,7 +50,7 @@ class TravisYaml(base.ConfigBase):
     def exists(self):
         return os.path.exists(self._travis_file)
 
-    def get_commands(self, command):
+    def get_commands(self, command, options=None):
         return self._open_travis_yaml().get('script', command)
 
     def get_prep_commands(self):

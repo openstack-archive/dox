@@ -53,7 +53,7 @@ class TestToxIni(base.TestCase):
     def test_get_commands(self):
         self.assertEqual(['foobar -c blah'],
                          self.toxini.get_commands(
-                             ['-c'], section='testenv2'))
+                             ['-c'], options=dict(section='testenv2')))
 
     def test_get_prep_commands(self):
         cmd = ['pip install -U  -r/dox/requirements.txt '
