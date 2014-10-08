@@ -158,10 +158,10 @@ class Runner(object):
         docker_args = ['--privileged=true',
                        '--user=%s' % self.user_map['username'],
                        '-v', "%s:/src" % os.path.abspath('.'),
-                       '-w', '/src',
-                       self.test_image_name]
+                       '-w', '/src']
         if not self.args.keep_image:
             docker_args.append('--rm')
+        docker_args.append(self.test_image_name)
         for c in command:
             docker_args.append(c)
         self._docker_run(*docker_args)
