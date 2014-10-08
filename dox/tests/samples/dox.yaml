@@ -7,7 +7,6 @@ testing:
   prep:
     - pip install -U -r requirements.txt -r test-requirements.txt
   commands:
-    - export PYTHONHASHSEED=$RANDOM
     - python setup.py testr --slowest
 
 pep8:
@@ -19,4 +18,4 @@ pep8:
   prep:
     - pip install -U -r requirements.txt -r test-requirements.txt
   commands:
-    - flake8
+    - pep8

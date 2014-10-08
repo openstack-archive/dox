@@ -22,12 +22,12 @@ import dox.config.dox_yaml
 import dox.config.tox_ini
 
 
-def get_images():
+def get_images(options):
     '''Examine the local environment and figure out where we should run.'''
 
     dockerfile = dox.config.dockerfile.get_dockerfile()
-    dox_yaml = dox.config.dox_yaml.get_dox_yaml()
-    tox_ini = dox.config.tox_ini.get_tox_ini()
+    dox_yaml = dox.config.dox_yaml.get_dox_yaml(options)
+    tox_ini = dox.config.tox_ini.get_tox_ini(options)
 
     if dockerfile.exists():
         default_images = []

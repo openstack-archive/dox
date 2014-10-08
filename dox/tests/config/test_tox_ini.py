@@ -27,14 +27,14 @@ class TestToxIni(base.TestCase):
     def setUp(self):
         super(TestToxIni, self).setUp()
 
-        self.toxini = tox_ini.ToxIni()
+        self.toxini = tox_ini.ToxIni({})
         self.toxini.tox_ini_file = os.path.join(base.SAMPLEDIR,
                                                 'tox.ini')
 
     def test_get_tox_ini(self):
-        tox_ini_new = tox_ini.ToxIni()
+        tox_ini_new = tox_ini.ToxIni({})
         with mock.patch.object(tox_ini, '_tox_ini', tox_ini_new):
-            self.assertEqual(tox_ini.get_tox_ini(),
+            self.assertEqual(tox_ini.get_tox_ini({}),
                              tox_ini_new)
 
     def test_base_class(self):
@@ -51,9 +51,12 @@ class TestToxIni(base.TestCase):
                          self.toxini.get_images())
 
     def test_get_commands(self):
+        self.toxini = tox_ini.ToxIni({'section': 'testenv2'})
+        self.toxini.tox_ini_file = os.path.join(base.SAMPLEDIR,
+                                                'tox.ini')
         self.assertEqual(['foobar -c blah'],
                          self.toxini.get_commands(
-                             ['-c'], section='testenv2'))
+                             ['-c']))
 
     def test_get_prep_commands(self):
         cmd = ['pip install -U  -r/dox/requirements.txt '

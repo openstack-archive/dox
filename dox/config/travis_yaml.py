@@ -26,10 +26,10 @@ __all__ = [
 _travis_yaml = None
 
 
-def get_travis_yaml():
+def get_travis_yaml(options):
     global _travis_yaml
     if _travis_yaml is None:
-        _travis_yaml = TravisYaml()
+        _travis_yaml = TravisYaml(options)
     return _travis_yaml
 
 
