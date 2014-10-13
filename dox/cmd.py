@@ -70,6 +70,11 @@ def parse_args():
                         help='User to run the container to '
                         'format is user:uid:gid, with boot2docker use '
                         'docker:1000:10 (default to your current user)')
+    parser.add_argument('--path-map', default=os.environ.get("DOX_PATH_MAP"),
+                        help='with boot2docker, specify how osx path maps to '
+                             'linux path. example --path-map /Users:/home, '
+                             'means /Users is available as /home on docker '
+                             'container')
     parser.add_argument('-k', '--keep', dest='keep_image', default=False,
                         action='store_true',
                         help="Keep test container after command finishes")

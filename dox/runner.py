@@ -37,6 +37,7 @@ class Runner(object):
         self.base_image_name = 'dox_%s_base' % self.project
         self.test_image_name = 'dox_%s_test' % self.project
         self.user_map = self._get_user_mapping()
+        self.path_map = self._get_path_mapping()
 
     def _get_user_mapping(self):
         """Get user mapping from command line or current user."""
@@ -45,6 +46,13 @@ class Runner(object):
         else:
             username, uid, gid = (os.getlogin(), os.getuid(), os.getgid())
         return {'username': username, 'uid': int(uid), 'gid': int(gid)}
+
+    def _get_path_mapping(self):
+        """Get path mapping from command line."""
+        if not self.args.path_map:
+            return None
+        local, remote = self.args.path_map.split(':')
+        return {'local': local, 'remote': remote}
 
     def is_docker_installed(self):
         try:
@@ -155,9 +163,13 @@ class Runner(object):
             shutil.rmtree(tempd)
 
     def run_commands(self, command):
+        path = os.path.abspath('.')
+        if self.path_map:
+            path = path.replace(self.path_map['local'],
+                                self.path_map['remote'])
         docker_args = ['--privileged=true',
                        '--user=%s' % self.user_map['username'],
-                       '-v', "%s:/src" % os.path.abspath('.'),
+                       '-v', "%s:/src" % path,
                        '-w', '/src']
         if not self.args.keep_image:
             docker_args.append('--rm')
