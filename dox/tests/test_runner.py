@@ -39,3 +39,12 @@ class TestRunner(base.TestCase):
         self.assertEqual('toto', dr.user_map['username'])
         self.assertEqual(12345, dr.user_map['uid'])
         self.assertEqual(67890, dr.user_map['gid'])
+
+    def test_path_mapping(self):
+        dr = doxrunner.Runner(argparse.Namespace(path_map='/Users:/home'))
+        self.assertEqual('/Users', dr.path_map['local'])
+        self.assertEqual('/home', dr.user_map['remote'])
+
+    def test_path_mapping_default(self):
+        dr = doxrunner.Runner(argparse.Namespace(path_map=None))
+        self.assertEqual(None, dr.path_map)
