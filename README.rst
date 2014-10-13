@@ -123,6 +123,13 @@ When running dox you will need to specify the docker username from the boot2dock
 
   dox --user-map=docker:1000:10
 
+If you use VirtualBox guest additions to mount your osx onto the boot2docker vm,
+example /Users/your_name/openstack/oslo-incubator as /home/your_name/openstack/oslo-incubator,
+then you can add the following mapping::
+
+   dos --path-map=/Users/your_name:/home/your_name
+
+
 Advanced
 --------
 It is possible to specify multiple images to be used in a dox run.
