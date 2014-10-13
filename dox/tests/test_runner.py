@@ -26,7 +26,8 @@ class TestRunner(base.TestCase):
         super(TestRunner, self).setUp()
 
     def test_user_mapping(self):
-        dr = doxrunner.Runner(argparse.Namespace(user_map='foo:100:10'))
+        dr = doxrunner.Runner(argparse.Namespace(user_map='foo:100:10',
+                                                 path_map=None))
         self.assertEqual('foo', dr.user_map['username'])
         self.assertEqual(100, dr.user_map['uid'])
         self.assertEqual(10, dr.user_map['gid'])
@@ -35,7 +36,25 @@ class TestRunner(base.TestCase):
     @mock.patch('os.getgid', return_value=67890)
     @mock.patch('os.getlogin', return_value='toto')
     def test_user_mapping_default(self, os_uid, os_gid, os_username):
-        dr = doxrunner.Runner(argparse.Namespace(user_map=None))
+        dr = doxrunner.Runner(argparse.Namespace(user_map=None,
+                                                 path_map=None))
         self.assertEqual('toto', dr.user_map['username'])
         self.assertEqual(12345, dr.user_map['uid'])
         self.assertEqual(67890, dr.user_map['gid'])
+
+    def test_path_mapping(self):
+        dr = doxrunner.Runner(argparse.Namespace(path_map='/Users:/home',
+                                                 user_map=None))
+        self.assertEqual('/Users', dr.path_map['local'])
+        self.assertEqual('/home', dr.path_map['remote'])
+
+    def test_path_mapping_extra_colon(self):
+        dr = doxrunner.Runner(argparse.Namespace(path_map='/Users:/home:foo',
+                                                 user_map=None))
+        self.assertEqual('/Users', dr.path_map['local'])
+        self.assertEqual('/home:foo', dr.path_map['remote'])
+
+    def test_path_mapping_default(self):
+        dr = doxrunner.Runner(argparse.Namespace(path_map=None,
+                                                 user_map=None))
+        self.assertEqual(None, dr.path_map)
