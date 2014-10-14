@@ -19,6 +19,7 @@ __all__ = [
 
 import logging
 import os
+import pwd
 import shlex
 import shutil
 import subprocess
@@ -44,7 +45,9 @@ class Runner(object):
         if self.args.user_map:
             username, uid, gid = self.args.user_map.split(':')
         else:
-            username, uid, gid = (os.getlogin(), os.getuid(), os.getgid())
+            username, uid, gid = (pwd.getpwuid(os.getuid())[0],
+                                  os.getuid(),
+                                  os.getgid())
         return {'username': username, 'uid': int(uid), 'gid': int(gid)}
 
     def _get_path_mapping(self):
