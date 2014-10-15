@@ -76,5 +76,5 @@ class TestCmd(base.TestCase):
 
     @mock.patch('dox.runner.Runner')
     def test_run_dox(self, m_runner):
-        dox.cmd.run_dox(default_argp, ['1', '2', '3'], '/bin/echo')
+        dox.cmd.run_dox(default_argp, ['1', '2', '3'], '/bin/echo', "name")
         self.assertEqual(1, m_runner.call_count)
