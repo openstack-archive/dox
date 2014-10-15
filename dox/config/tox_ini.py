@@ -66,6 +66,10 @@ class ToxIni(base.ConfigBase):
         """
         section = self.options.get('section',
                                    self.default_section)
+
+        if section == '_default':
+            section = self.default_section
+
         ini = self._open_tox_ini()
         commands = ini.get(section, 'commands').split("\n")
         extra_args = " ".join(extra_args)

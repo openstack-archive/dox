@@ -45,9 +45,11 @@ class DoxYaml(base.ConfigBase):
     default_keys_of_section = ['images', 'commands', 'add', 'prep']
 
     def get_section(self, yaml, section):
+        if section == '_default':
+            section = self.default_section
+
         # NOTE(chmou): This is for compatibility mode with dox.yml with no
         # sections, probably need to be removed in the future
-
         if (section is None and
            (all(i in yaml.keys() for i in self.default_keys_of_section)
                or all(i in self.default_keys_of_section
