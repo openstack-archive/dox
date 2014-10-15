@@ -85,32 +85,13 @@ def parse_args():
 
 
 def main():
-
     args = parse_args()
     setup_logging(get_log_level(args))
 
-    return run_dox(args)
+    return runner(args)
 
 
-def run_dox(args):
-    if not dox.runner.Runner(args).is_docker_installed():
-        sys.exit(1)
-
-    options = {'section': args.environment}
-
-    # Get Image
-    if args.images is None:
-        images = dox.images.get_images(options)
-    else:
-        images = args.images.split(',')
-
-    # Get Command
-    if args.command:
-        command = dox.config.cmdline.CommandLine(args.extra_args)
-        logger.debug("Command source is the command line")
-    else:
-        command = dox.commands.Commands(args.extra_args, options)
-        logger.debug("Command source is %s" % command.source.source_name())
+def run_dox(args, images, command):
     # Run
     try:
         run = functools.partial(dox.runner.Runner(args).run,
@@ -119,3 +100,38 @@ def run_dox(args):
     except Exception:
         logger.error("Operation failed, aborting dox.", exc_info=args.debug)
         return 1
+
+
+def runner(args):
+    options = {}
+    args_images = None
+
+    if not dox.runner.Runner(args).is_docker_installed():
+        sys.exit(1)
+
+    # Get Image
+    if args.images:
+        args_images = args.images.split(',')
+
+    if args.command:
+        command = dox.config.cmdline.CommandLine(args.extra_args)
+        logger.debug("Command source is the command line")
+        return run_dox(args, args_images, command)
+
+    if args.environment:
+        sections = args.environment.split(',')
+    else:
+        sections = ['_default']
+
+    for section in sections:
+        options['section'] = section
+
+        if args_images:
+            images = args_images
+        else:
+            images = dox.images.get_images(options)
+
+        command = dox.commands.Commands(args.extra_args, options)
+        logger.debug("Command source is %s, section %s" % (
+            command.source.source_name(), section))
+        run_dox(args, images, command)
