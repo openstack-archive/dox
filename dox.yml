@@ -10,20 +10,10 @@ testing:
     - export PYTHONHASHSEED=$RANDOM
     - python setup.py testr --slowest
 
-pep8:
-  images:
-    - infra/trusty
-  add:
-    - requirements.txt
-    - test-requirements.txt
-  prep:
-    - pip install -U -r requirements.txt -r test-requirements.txt
+testing:pep8:
   commands:
     - flake8
 
-nulltest:
-  images:
-    - busybox:latest
-
+testing:cover:
   commands:
     - /bin/echo "hello"

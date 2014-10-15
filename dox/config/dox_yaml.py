@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import os
+
 import yaml
 
 import dox.config.base as base
@@ -44,25 +45,41 @@ class DoxYaml(base.ConfigBase):
     default_section = 'testing'
     default_keys_of_section = ['images', 'commands', 'add', 'prep']
 
-    def get_section(self, yaml, section):
+    def _parse_parent_child_section(self, section, _yaml):
+        ret = {}
+        if ':' not in section:
+            return _yaml
+
+        parent, child = section.split(':')
+
+        if parent in self._yaml.keys():
+            ret = self._yaml.get(parent)
+            ret.update(_yaml)
+        else:
+            raise DoxYamlSectionNotFound("Parent %s was not found" % parent)
+        return ret
+
+    def get_section(self, _yaml, section):
         if section == '_default':
             section = self.default_section
 
         # NOTE(chmou): This is for compatibility mode with dox.yml with no
         # sections, probably need to be removed in the future
         if (section is None and
-           (all(i in yaml.keys() for i in self.default_keys_of_section)
+           (all(i in _yaml.keys() for i in self.default_keys_of_section)
                or all(i in self.default_keys_of_section
-                      for i in yaml.keys()))):
-            return yaml
+                      for i in _yaml.keys()))):
+            return _yaml
         elif not section:
-            if self.default_section in yaml.keys():
-                return yaml.get(self.default_section)
+            if self.default_section in _yaml.keys():
+                return self._parse_parent_child_section(
+                    self.default_section, _yaml.get(self.default_section))
             raise DoxYamlSectionNotFound("You need to specify a section.")
-        elif section not in yaml.keys():
+        elif section not in _yaml.keys():
             raise DoxYamlSectionNotFound(section)
-        elif section:
-            return yaml.get(section)
+
+        return self._parse_parent_child_section(section,
+                                                _yaml.get(section))
 
     def _open_dox_yaml(self):
         if self._yaml is None:
