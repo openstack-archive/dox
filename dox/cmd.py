@@ -111,7 +111,7 @@ def runner(args):
 
     # Get Image
     if args.images:
-        args_images = args.images.split(',')
+        args_images = [x.strip() for x in args.images.split(',')]
 
     if args.command:
         command = dox.config.cmdline.CommandLine(args.extra_args)
