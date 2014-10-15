@@ -91,10 +91,10 @@ def main():
     return runner(args)
 
 
-def run_dox(args, images, command):
+def run_dox(args, images, command, image_name):
     # Run
     try:
-        run = functools.partial(dox.runner.Runner(args).run,
+        run = functools.partial(dox.runner.Runner(args, image_name).run,
                                 command=command)
         map(run, images)
     except Exception:
@@ -134,4 +134,7 @@ def runner(args):
         command = dox.commands.Commands(args.extra_args, options)
         logger.debug("Command source is %s, section %s" % (
             command.source.source_name(), section))
-        run_dox(args, images, command)
+
+        # TODO(chmouel): add to section a proper image_name that include the
+        # type of backend i.e: dox_yaml/tox_init
+        run_dox(args, images, command, image_name=section)
