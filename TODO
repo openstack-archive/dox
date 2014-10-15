@@ -1,0 +1,6 @@
+
+env inherithance support in dox.yml
+env inherithance parsing in tox_ini
+exclusiveness in arguments parsing
+choose explicitely the backend on command line (dox.yml or tox.ini)
+functional testing of dox (via dox ;))
