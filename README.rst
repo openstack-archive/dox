@@ -114,12 +114,11 @@ there is a tool called `boot2docker <http://boot2docker.io/>`_ which
 allows you to run a remote docker server in a VirtualBox VM and the
 client running on the non Linux desktop.
 
-There is no support for mounted volumes by default with `boot2docker` which is needed by `dox`.
-To get this feature you will need to follow these steps documented here :
+Volume support started to be supported by `bootdocker` since docker version
+1.3. You will need to be at least on that version to have volume mount support.
 
-https://medium.com/boot2docker-lightweight-linux-for-docker/boot2docker-together-with-virtualbox-guest-additions-da1e3ab2465c
-
-When running dox you will need to specify the docker username from the boot2docker vm, commonly like this::
+If you username id is different from the docker username on the boot2docker vm,
+you will need to specify it on the command line, like this::
 
   dox --user-map=docker:1000:10
 
