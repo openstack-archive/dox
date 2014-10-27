@@ -21,6 +21,9 @@ import six
 class ConfigBase(object):
     """Configuration file reader base class."""
 
+    def __init__(self, options):
+        self.options = options
+
     @abc.abstractmethod
     def exists(self):
         """Check if the configuration file is present.

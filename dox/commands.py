@@ -28,12 +28,12 @@ import dox.config.travis_yaml
 logger = logging.getLogger(__name__)
 
 
-def get_commands():
+def get_commands(options):
     '''Examine the local environment and figure out what we should run.'''
 
-    dox_yaml = dox.config.dox_yaml.get_dox_yaml()
-    tox_ini = dox.config.tox_ini.get_tox_ini()
-    travis_yaml = dox.config.travis_yaml.get_travis_yaml()
+    dox_yaml = dox.config.dox_yaml.get_dox_yaml(options)
+    tox_ini = dox.config.tox_ini.get_tox_ini(options)
+    travis_yaml = dox.config.travis_yaml.get_travis_yaml(options)
 
     for source in (dox_yaml, tox_ini, travis_yaml):
         if source.exists():
@@ -43,8 +43,9 @@ def get_commands():
 
 class Commands(object):
 
-    def __init__(self, extra_args=[]):
-        self.source = get_commands()
+    def __init__(self, extra_args=[], options=None):
+        self.options = options or {}
+        self.source = get_commands(options)
         self.args = []
         self.extra_args = extra_args
 
@@ -79,7 +80,6 @@ class Commands(object):
         on the docker command line.
         """
         commands = self.source.get_commands(self.extra_args)
-
         if len(commands) > 1:
             return self._test_command_as_script(commands)
 

@@ -28,10 +28,10 @@ __all__ = [
 _tox_ini = None
 
 
-def get_tox_ini():
+def get_tox_ini(options):
     global _tox_ini
     if _tox_ini is None:
-        _tox_ini = ToxIni()
+        _tox_ini = ToxIni(options)
     return _tox_ini
 
 
@@ -39,6 +39,7 @@ class ToxIni(base.ConfigBase):
 
     _ini = None
     tox_ini_file = 'tox.ini'
+    default_section = 'testenv'
 
     def _open_tox_ini(self):
         if self._ini is None:
@@ -57,12 +58,14 @@ class ToxIni(base.ConfigBase):
         if ini.has_option('docker', 'images'):
             return ini.get('docker', 'images').split(',')
 
-    def get_commands(self, extra_args, section='testenv'):
+    def get_commands(self, extra_args):
         """Get commands to run from the config file.
 
         If any of the commands contain the string '{posargs}', then this
         is replaced with the extra_args value.
         """
+        section = self.options.get('section',
+                                   self.default_section)
         ini = self._open_tox_ini()
         commands = ini.get(section, 'commands').split("\n")
         extra_args = " ".join(extra_args)
