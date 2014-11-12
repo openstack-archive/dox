@@ -173,6 +173,8 @@ class Runner(object):
                        '--user=%s' % self.user_map['username'],
                        '-v', "%s:/src" % path,
                        '-w', '/src']
+        if self.args.background:
+            docker_args.append('-d')
         if not self.args.keep_image:
             docker_args.append('--rm')
         docker_args.append(self.test_image_name)

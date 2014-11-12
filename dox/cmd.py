@@ -81,6 +81,10 @@ def parse_args():
     parser.add_argument('-k', '--keep', dest='keep_image', default=False,
                         action='store_true',
                         help="Keep test container after command finishes")
+    parser.add_argument('-b', '--background', dest='background', default=False,
+                        action='store_true',
+                        help="Run the test container in the background. "
+                             "Use this to run a daemonized container.")
     return parser.parse_args()
 
 
