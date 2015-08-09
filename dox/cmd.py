@@ -97,8 +97,8 @@ def run_dox(args, images, command, image_name):
         run = functools.partial(dox.runner.Runner(args, image_name).run,
                                 command=command)
         map(run, images)
-    except Exception:
-        logger.error("Operation failed, aborting dox.", exc_info=args.debug)
+    except Exception as e:
+        logger.error("Operation failed, aborting dox.", exc_info=e)
         return 1
 
 
