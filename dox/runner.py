@@ -148,11 +148,13 @@ class Runner(object):
         dockerfile.append("FROM %s" % image)
         try:
             tempd = tempfile.mkdtemp()
-            dockerfile.append(
-                "RUN useradd -M -U -d /src -u %(uid)s %(user)s" % dict(
-                    uid=self.user_map['uid'],
-                    gid=self.user_map['gid'],
-                    user=self.user_map['username']))
+            if not self.user_map['username'] == 'root':
+                dockerfile.append(
+                    "RUN useradd -M -U -d /src -u %(uid)s %(user)s" % dict(
+                        uid=self.user_map['uid'],
+                        gid=self.user_map['gid'],
+                        user=self.user_map['username']))
+
             for add_file in commands.get_add_files():
                 shutil.copy(add_file, os.path.join(tempd, add_file))
                 dockerfile.append("ADD %s /dox/" % add_file)
