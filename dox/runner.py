@@ -36,10 +36,10 @@ class Runner(object):
         image_name = image_name and "_" + image_name or ""
         self.args = args
         self.project = os.path.basename(os.path.abspath('.'))
-        self.base_image_name = '_dox/%s%s_base' % (self.project,
-                                                   image_name)
-        self.test_image_name = '_dox/%s%s_test' % (self.project,
-                                                   image_name)
+        self.base_image_name = 'dox/%s%s_base' % (self.project,
+                                                  image_name)
+        self.test_image_name = 'dox/%s%s_test' % (self.project,
+                                                  image_name)
         self.user_map = self._get_user_mapping()
         self.path_map = self._get_path_mapping()
 
