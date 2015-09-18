@@ -16,6 +16,19 @@ Contents:
    usage
    contributing
 
+
+Release Notes
+==============
+
+0.2.0
+-----
+
+dffe391 Don't prefix the cached image with `_`
+ea141b9 Don't run useradd for root
+d3971df Add Centos 7 Dockerfile
+d0d15f9 More informative error when command fails
+
+
 Indices and tables
 ==================
 
