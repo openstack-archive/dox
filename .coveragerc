@@ -4,4 +4,4 @@ source = dox
 omit = dox/tests/*,dox/openstack/*
 
 [report]
-ignore-errors = True
+ignore_errors = True
