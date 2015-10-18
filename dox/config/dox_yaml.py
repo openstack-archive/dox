@@ -20,9 +20,9 @@ import yaml
 import dox.config.base as base
 
 
-__all__ = [
+__all__ = (
     'get_dox_yaml',
-]
+)
 
 _dox_yaml = None
 

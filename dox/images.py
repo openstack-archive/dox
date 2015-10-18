@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__all__ = [
+__all__ = (
     'get_images',
-]
+)
 
 import dox.config.dockerfile
 import dox.config.dox_yaml

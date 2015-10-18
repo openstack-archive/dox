@@ -19,9 +19,9 @@ import yaml
 import dox.config.base as base
 
 
-__all__ = [
+__all__ = (
     'get_travis_yaml',
-]
+)
 
 _travis_yaml = None
 

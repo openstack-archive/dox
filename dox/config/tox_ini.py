@@ -21,9 +21,9 @@ from six.moves.configparser import ConfigParser
 import dox.config.base as base
 
 
-__all__ = [
+__all__ = (
     'get_tox_ini',
-]
+)
 
 _tox_ini = None
 
