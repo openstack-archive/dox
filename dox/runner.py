@@ -82,8 +82,6 @@ class Runner(object):
 
     def _docker_cmd(self, *args):
         base_docker = ['docker']
-        if self.args.debug:
-            base_docker.append('-D')
         try:
             self._run_shell_command(base_docker + list(args))
         except Exception as e:
