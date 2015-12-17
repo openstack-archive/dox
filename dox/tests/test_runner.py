@@ -105,7 +105,7 @@ class TestRunner(base.TestCase):
         dr._run_shell_command = mock.MagicMock()
         dr._docker_cmd("version")
         dr._run_shell_command.assert_called_with(
-            ['docker', '-D', 'version']
+            ['docker', 'version']
         )
 
         dr = doxrunner.Runner(argparse.Namespace(user_map=None,
