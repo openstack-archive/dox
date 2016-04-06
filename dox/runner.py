@@ -33,12 +33,12 @@ logger = logging.getLogger(__name__)
 class Runner(object):
 
     def __init__(self, args, image_name=None):
-        image_name = image_name and "/" + image_name or ""
+        image_name = image_name and image_name or ""
         self.args = args
         self.project = os.path.basename(os.path.abspath('.'))
-        self.base_image_name = 'dox/%s%s_base' % (self.project,
+        self.base_image_name = 'dox/%s%s-base' % (self.project,
                                                   image_name)
-        self.test_image_name = 'dox/%s%s_test' % (self.project,
+        self.test_image_name = 'dox/%s%s-test' % (self.project,
                                                   image_name)
         self.user_map = self._get_user_mapping()
         self.path_map = self._get_path_mapping()
