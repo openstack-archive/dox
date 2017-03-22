@@ -71,7 +71,7 @@ class TestRunner(base.TestCase):
     def test_path_mapping_default(self):
         dr = doxrunner.Runner(argparse.Namespace(path_map=None,
                                                  user_map=None))
-        self.assertEqual(None, dr.path_map)
+        self.assertIsNone(dr.path_map)
 
     def test_is_docker_installed(self):
         dr = doxrunner.Runner(argparse.Namespace(
