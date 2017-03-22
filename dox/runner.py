@@ -154,8 +154,12 @@ class Runner(object):
                         user=self.user_map['username']))
 
             for add_file in commands.get_add_files():
-                shutil.copy(add_file, os.path.join(tempd, add_file))
-                dockerfile.append("ADD %s /dox/" % add_file)
+                tmpfile = os.path.join(tempd, add_file)
+                path = os.path.dirname(tmpfile)
+                if not os.path.exists(path):
+                    os.makedirs(path)
+                shutil.copy(add_file, tmpfile)
+                dockerfile.append("ADD %s /dox/%s" % (add_file, add_file))
             dockerfile.append("WORKDIR /dox")
             for command in commands.prep_commands():
                 dockerfile.append("RUN %s\n" % command)
