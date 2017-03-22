@@ -128,7 +128,7 @@ class TestRunner(base.TestCase):
         my_temp_file = tempfile.mkdtemp()
         docker_written = os.path.join(my_temp_file, "Dockerfile")
         fk = FakeCommands(["toto1", "toto2"],
-                          ["blah3", "blah4"])
+                          ["blah3", "blah4", "test/blah5"])
 
         dr = doxrunner.Runner(argparse.Namespace(
             quiet=False, noop=False,
@@ -143,8 +143,8 @@ class TestRunner(base.TestCase):
             dr.test_image_name, my_temp_file)
 
         # Only the last one
-        copy.assert_called_with('blah4',
-                                os.path.join(my_temp_file, "blah4"))
+        copy.assert_called_with('test/blah5',
+                                os.path.join(my_temp_file, "test/blah5"))
         self.assertTrue(copy.called)
         self.assertTrue(rmtree.called)
         self.assertTrue(os.path.exists(docker_written))
@@ -152,8 +152,9 @@ class TestRunner(base.TestCase):
 
         expected = """FROM %s
 RUN useradd -M -U -d /src -u %s %s
-ADD blah3 /dox/
-ADD blah4 /dox/
+ADD blah3 /dox/blah3
+ADD blah4 /dox/blah4
+ADD test/blah5 /dox/test/blah5
 WORKDIR /dox
 RUN toto1
 
