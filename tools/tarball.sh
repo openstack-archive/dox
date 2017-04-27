@@ -20,7 +20,7 @@ if [ $(id -gn) != ${GROUP} ]; then
 fi
 
 ### Build image with docker
-IMAGES="infra/centos7 infra/trusty"
+IMAGES="infra/centos7 infra/trusty infra/xenial"
 for IMAGE in $IMAGES; do
     docker build dockerfiles/$IMAGE -t $IMAGE
 done
