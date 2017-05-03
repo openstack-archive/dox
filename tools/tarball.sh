@@ -27,9 +27,7 @@ done
 
 docker images
 
-# NOTE(pabelanger): Make sure we hash by ZUUL_COMMIT, so we know which tarball
-# to download from secure worker.
-DIST=$WORKSPACE/dist/$ZUUL_COMMIT
+DIST=$WORKSPACE/images
 mkdir -p $DIST
 
 ### Save docker image for upload to tarballs.o.o
