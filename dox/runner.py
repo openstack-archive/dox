@@ -33,12 +33,12 @@ logger = logging.getLogger(__name__)
 class Runner(object):
 
     def __init__(self, args, image_name=None):
-        image_name = image_name and "_" + image_name or ""
+        image_name = image_name and image_name or ""
         self.args = args
         self.project = os.path.basename(os.path.abspath('.'))
-        self.base_image_name = 'dox/%s%s_base' % (self.project,
+        self.base_image_name = 'dox/%s%s-base' % (self.project,
                                                   image_name)
-        self.test_image_name = 'dox/%s%s_test' % (self.project,
+        self.test_image_name = 'dox/%s%s-test' % (self.project,
                                                   image_name)
         self.user_map = self._get_user_mapping()
         self.path_map = self._get_path_mapping()
@@ -147,8 +147,9 @@ class Runner(object):
         try:
             tempd = tempfile.mkdtemp()
             if not self.user_map['username'] == 'root':
+                #check if user exists. If not, add them
                 dockerfile.append(
-                    "RUN useradd -M -U -d /src -u %(uid)s %(user)s" % dict(
+                    "RUN id -u %(user)s || useradd -M -U -d /src -u %(uid)s %(user)s" % dict(
                         uid=self.user_map['uid'],
                         gid=self.user_map['gid'],
                         user=self.user_map['username']))
