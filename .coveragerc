@@ -1,7 +1,0 @@
-[run]
-branch = True
-source = dox
-omit = dox/tests/*,dox/openstack/*
-
-[report]
-ignore_errors = True
